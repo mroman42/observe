@@ -41,5 +41,6 @@ montyHall = do
 Do-notation with interchange is an internal language for copy-discard monoidal categories. Up to statement interchange, it coincides with the hypergraph representation of a string diagram.
 
 **References.**
+ - *Solving Puzzles in Decision Theory.* Di Lavore, Román, 2024.
  - *Evidential Decision Theory via Partial Markov Categories.* Di Lavore, Román, 2023.
  - *Getting Wiser from Multiple Data: Probabilistic Updating according to Jeffrey and Pearl*, Jacobs, 2024.
