@@ -19,12 +19,12 @@ host :: Door -> Door -> Distribution Door
 host Left   Left   = uniform [Middle, Right]
 host Middle Middle = uniform [Left, Right]
 host Right  Right  = uniform [Left, Middle] 
-host Left Middle = uniform [Right]
-host Left Right = uniform [Middle]
-host Middle Left = uniform [Right]
-host Middle Right = uniform [Left]
-host Right Left = uniform [Middle]
-host Right Middle = uniform [Left]
+host Left Middle   = uniform [Right]
+host Left Right    = uniform [Middle]
+host Middle Left   = uniform [Right]
+host Middle Right  = uniform [Left]
+host Right Left    = uniform [Middle]
+host Right Middle  = uniform [Left]
 
 -- normalize montyHall [(Middle,1 % 3),(Right,2 % 3)]
 montyHall :: Distribution Door
