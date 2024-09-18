@@ -1,13 +1,4 @@
--- A trial implementation of a probabilistic programming 
--- setup with the primitives of a Partial Markov Category.
-
-{-# LANGUAGE GADTs #-}
 {-# LANGUAGE RebindableSyntax #-}
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DerivingStrategies #-}
-{-# LANGUAGE BlockArguments #-}
-
-
 module SubdistributionAux where
 
 import Prelude
@@ -15,9 +6,6 @@ import Data.Finitary
 import Data.Ord
 import Data.Maybe
 import Data.List ( maximumBy )
-import GHC.Generics (Generic)
-
-
 
 removeZeroes :: [(a, Rational)] -> [(a, Rational)]
 removeZeroes [] = []
@@ -77,4 +65,3 @@ totalWeight l = sum (map snd l)
 
 distNormalize :: (Eq a) => [(a,Rational)] -> [(a,Rational)]
 distNormalize l = map (\(x,r) -> (x,r / totalWeight l)) l
-
