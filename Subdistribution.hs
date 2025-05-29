@@ -1,4 +1,6 @@
 {-# LANGUAGE RebindableSyntax #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use <&>" #-}
 module Subdistribution where
 
 import Prelude hiding ((>>=), return)
@@ -26,12 +28,16 @@ instance (Eq a) => Eq (Distribution a) where
 (>>=) :: (Eq a, Eq b) => Distribution a -> (a -> Distribution b) -> Distribution b
 (>>=) (Distribution d) f = Distribution $ distBind d (unDistribution . f)
 
+dmap :: (Eq a, Eq b) => (a -> b) -> Distribution a -> Distribution b
+dmap f d = d >>= (return . f)
+
 (>>) :: (Eq a, Eq b) => 
   Distribution a -> Distribution b -> Distribution b
 (>>) d f = d >>= const f
 
 return :: (Eq a) => a -> Distribution a
 return x = Distribution [(x,1)]
+
 
 observe :: Bool -> Distribution ()
 observe True = return ()
@@ -64,3 +70,5 @@ normalize (Distribution x) = Distribution (distNormalize x)
 
 uniform :: (Eq a) => [a] -> Distribution a
 uniform l = fromList (map (, 1 / toRational (length l)) l)
+
+
