@@ -1,4 +1,7 @@
 {-# LANGUAGE RebindableSyntax #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use let" #-}
+{-# HLINT ignore "Use join" #-}
 
 module ExamplePearlJeffrey where
 
@@ -42,13 +45,11 @@ experimentPearl3 = do
     (do patient <- prior ; r <- test patient ; observe (r == Positive) ; return patient, 80/100) ,
     (do patient <- prior ; r <- test patient ; observe (r == Negative) ; return patient, 20/100) ]
   procedure
-  
+
 
 experimentJeffrey :: Distribution Health
 experimentJeffrey = do
   patient1 <- prior
-  result1 <- test patient1
-  observe (result1 == Positive)
   patient2 <- prior
   result2 <- test patient2
   observe (result2 == Negative)
@@ -56,12 +57,22 @@ experimentJeffrey = do
 
 experimentJeffrey2 :: Distribution Health
 experimentJeffrey2 = do
-  x <- procedure Positive
-  y <- procedure Negative
+  procedure <- return (do 
+    patient <- prior
+    result <- test patient
+    return (patient, result))
+  (p1, r1) <- procedure
+  observe (r1 == Positive)
+  (p2, r2) <- procedure
+  observe (r2 == Negative)
+  distribution [(p1, 80/100), (p2, 20/100)]
+
+
+experimentJeffrey3 :: Distribution Health
+experimentJeffrey3 = do
+  let result = do patient <- prior ; test patient
+  x <- result
+  y <- result
+  observe (x == Positive)
+  observe (y == Negative)
   distribution [(x, 80/100), (y, 20/100)]
- where
-    procedure o = do
-      patient <- prior
-      r <- test patient
-      observe (r == o)
-      return patient

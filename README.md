@@ -42,6 +42,6 @@ Do-notation with interchange is an internal language for copy-discard monoidal c
 
 **References.**
  - *[A Simple Formal Language for Probabilistic Decision Problems](https://arxiv.org/abs/2410.10643).* E. Di Lavore, B. Jacobs, M. Román, 2024.
- - *Solving Puzzles in Decision Theory.* E. Di Lavore, M. Román, 2024.
  - *Evidential Decision Theory via Partial Markov Categories.* E. Di Lavore, M. Román, 2023.
  - *Getting Wiser from Multiple Data: Probabilistic Updating according to Jeffrey and Pearl*, B. Jacobs, 2024.
+ - *Partial Markov Categories.* E. Di Lavore, M. Román, P. Sobociński, 2025. 
