@@ -70,4 +70,8 @@ normalize (Distribution x) = Distribution (distNormalize x)
 uniform :: (Eq a) => [a] -> Distribution a
 uniform l = fromList (map (, 1 / toRational (length l)) l)
 
+weightOf :: (Eq a) => a -> Distribution a -> Rational
+weightOf x (Distribution d) = weightOfPoint x d
 
+normFilter :: (Eq a) => (a -> Bool) -> Distribution a -> Distribution a
+normFilter p d = normalize (Distribution (filter (\(x,v) -> p x) (toList d)))
