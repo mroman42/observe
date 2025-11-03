@@ -75,3 +75,6 @@ weightOf x (Distribution d) = weightOfPoint x d
 
 normFilter :: (Eq a) => (a -> Bool) -> Distribution a -> Distribution a
 normFilter p d = normalize (Distribution (filter (\(x,v) -> p x) (toList d)))
+
+dJoin :: (Eq a) => Distribution (Distribution a) -> Distribution a
+dJoin dss = (>>=) dss id
