@@ -4,7 +4,6 @@
 module Subdistribution where
 
 import Prelude hiding ((>>=), return)
-import Data.Finitary
 import Data.Ord
 import Data.Maybe
 import Data.List ( maximumBy )
@@ -46,7 +45,7 @@ observe False = absurd
 assert :: Bool -> Distribution ()
 assert = observe
 
-absurd :: (Finitary a) => Distribution a
+absurd :: (Eq a) => Distribution a
 absurd = Distribution []
 
 fromList, distribution :: (Eq a) => [(a,Rational)] -> Distribution a
@@ -71,4 +70,11 @@ normalize (Distribution x) = Distribution (distNormalize x)
 uniform :: (Eq a) => [a] -> Distribution a
 uniform l = fromList (map (, 1 / toRational (length l)) l)
 
+weightOf :: (Eq a) => a -> Distribution a -> Rational
+weightOf x (Distribution d) = weightOfPoint x d
 
+normFilter :: (Eq a) => (a -> Bool) -> Distribution a -> Distribution a
+normFilter p d = normalize (Distribution (filter (\(x,v) -> p x) (toList d)))
+
+dJoin :: (Eq a) => Distribution (Distribution a) -> Distribution a
+dJoin dss = (>>=) dss id
