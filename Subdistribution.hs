@@ -4,7 +4,6 @@
 module Subdistribution where
 
 import Prelude hiding ((>>=), return)
-import Data.Finitary
 import Data.Ord
 import Data.Maybe
 import Data.List ( maximumBy )
@@ -46,7 +45,7 @@ observe False = absurd
 assert :: Bool -> Distribution ()
 assert = observe
 
-absurd :: (Finitary a) => Distribution a
+absurd :: (Eq a) => Distribution a
 absurd = Distribution []
 
 fromList, distribution :: (Eq a) => [(a,Rational)] -> Distribution a

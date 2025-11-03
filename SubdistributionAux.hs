@@ -2,7 +2,6 @@
 module SubdistributionAux where
 
 import Prelude
-import Data.Finitary
 import Data.Ord
 import Data.Maybe
 import Data.List ( maximumBy )
