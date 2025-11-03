@@ -52,7 +52,7 @@ health NoGene NoTar = Just $ distribution [(Cancer, 2/10), (NoCancer, 8/10)]
 
 intervene :: Bool -> Maybe (Distribution ())
 intervene True = return ()
-intervene False = Just $ Distribution []
+intervene False = Nothing
 
 
 cancerDist :: Maybe (Distribution (HasCancer, IsSmoker))
@@ -62,7 +62,6 @@ cancerDist = do
     hasTar <- tar isSmoker
     cancer <- health gene hasTar
     return (cancer, isSmoker)
-
 
 conditionalSmoking :: Maybe (Distribution HasCancer)
 conditionalSmoking = do
@@ -83,55 +82,4 @@ causalSmoking = do
     hasTar <- tar isSmoker
     cancer <- health gene hasTar
     return cancer
-
-    
--- (|>) :: (Eq a, Eq b) => Maybe (Distribution a) -> (a -> Maybe (Distribution b)) -> Maybe (Distribution b)
--- (|>) = (>>=)
-
--- conditionalSmokingB :: Maybe (Distribution HasCancer)
--- conditionalSmokingB = 
---     prevalence >>= \gene ->
---     smokes gene >>= \isSmoker ->
---     guarding (isSmoker == Smoker) >>= \() ->
---     tar Smoker >>= \hasTar ->
---     health gene hasTar >>= \cancer ->
---     return cancer
-
--- causalSmokingB :: Maybe (Distribution HasCancer)
--- causalSmokingB = 
---     prevalence |> \gene ->
---     (smokes gene |> \isSmoker ->
---     (guarding (isSmoker == Smoker) |> \() ->
---     (tar Smoker |> \hasTar ->
---     health gene hasTar |> \cancer ->
---     return cancer)))
-
--- conditionalSmokingA :: Maybe (Distribution HasCancer)
--- conditionalSmokingA = norm $ do
---     gene <- prevalence
---     isSmoker <- smokes gene
---     observe (isSmoker == Smoker)
---     hasTar <- tar isSmoker
---     cancer <- health gene hasTar
---     return cancer
-
--- causalSmoking :: Maybe (Distribution HasCancer)
--- causalSmoking = norm $ do
---     gene <- prevalence
---     isSmoker <- normalizationBox $ do 
---         isSmoker <- smokes gene
---         observe (isSmoker == Smoker)
---         return isSmoker
---     hasTar <- tar isSmoker
---     cancer <- health gene hasTar        
---     return cancer
-
--- causalSmokingB :: Maybe (Distribution HasCancer)
--- causalSmokingB = norm $ do
---     gene <- prevalence
---     isSmoker <- return Smoker
---     hasTar <- tar isSmoker
---     cancer <- health gene hasTar        
---     return cancer    
-
 

@@ -28,13 +28,12 @@ health NoGene Tar = distribution [(Cancer, 2/5), (NoCancer, 3/5)]
 health Gene NoTar = distribution [(Cancer, 3/10), (NoCancer, 7/10)]
 health NoGene NoTar = distribution [(Cancer, 2/10), (NoCancer, 8/10)]
 
---cancerDist :: Distribution (HasGene, HasTar, IsSmoker)
 cancerDist = do
     gene <- prevalence
     isSmoker <- smokes gene
     hasTar <- tar isSmoker
     cancer <- health gene hasTar
-    return (cancer, isSmoker) --(gene, hasTar, isSmoker)
+    return (cancer, isSmoker)
 
 conditionalSmoking :: Distribution HasCancer
 conditionalSmoking = do
