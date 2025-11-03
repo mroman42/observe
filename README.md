@@ -40,8 +40,35 @@ montyHall = do
 
 Do-notation with interchange is an internal language for copy-discard monoidal categories. Up to statement interchange, it coincides with the hypergraph representation of a string diagram.
 
+## Interventions
+
+Observe now allows interventions in the internal language of the magmoid of normalization.
+
+``` haskell
+conditionalSmoking :: Maybe (Distribution HasCancer)
+conditionalSmoking = do
+    (gene, isSmoker) <- do 
+        gene <- prevalence
+        isSmoker <- smokes gene
+        return (gene, isSmoker)
+    intervene (isSmoker == Smoker)
+    hasTar <- tar isSmoker
+    cancer <- health gene hasTar
+    return cancer
+
+causalSmoking :: Maybe (Distribution HasCancer)
+causalSmoking = do
+    gene <- prevalence
+    isSmoker <- smokes gene
+    intervene (isSmoker == Smoker)
+    hasTar <- tar isSmoker
+    cancer <- health gene hasTar
+    return cancer
+```
+
 **References.**
  - *[A Simple Formal Language for Probabilistic Decision Problems](https://arxiv.org/abs/2410.10643).* E. Di Lavore, B. Jacobs, M. Román, 2024.
  - *Evidential Decision Theory via Partial Markov Categories.* E. Di Lavore, M. Román, 2023.
  - *Getting Wiser from Multiple Data: Probabilistic Updating according to Jeffrey and Pearl*, B. Jacobs, 2024.
- - *Partial Markov Categories.* E. Di Lavore, M. Román, P. Sobociński, 2025. 
+ - *Partial Markov Categories.* E. Di Lavore, M. Román, P. Sobociński, 2025.
+ - *Accepting Normalization via Markov Magmoids.* E. Di Lavore, M. Román, M. Széles, 2025.
