@@ -3,6 +3,7 @@ module NormalizedDistribution where
 
 import SubdistributionAux
 import Subdistribution hiding ((>>=), (>>), return)
+import Distribution hiding ((>>=), (>>), return)
 import Prelude hiding ((>>=), (>>), return)
 import Data.Maybe
 

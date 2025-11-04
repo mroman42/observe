@@ -10,12 +10,12 @@ ifThenElse True  x y = x
 ifThenElse False x y = y
 
 
-norm :: (Eq a) => Distribution a -> Maybe (Distribution a)
+norm :: (Eq a) => Subdistribution a -> Maybe (Subdistribution a)
 norm d = ifThenElse (validity d == 0) Nothing (Just (rescale d))
 
-subd :: (Eq a) => Maybe (Distribution a) -> Distribution a
-subd = fromMaybe (Distribution [])
+subd :: (Eq a) => Maybe (Subdistribution a) -> Subdistribution a
+subd = fromMaybe (Subdistribution [])
 
-normalizationBox :: (Eq a) => Distribution a -> Distribution a
+normalizationBox :: (Eq a) => Subdistribution a -> Subdistribution a
 normalizationBox = subd . norm
 

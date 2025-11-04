@@ -13,7 +13,7 @@ data Grade = A | B | C deriving (Eq, Show, Ord)
 data SatScore = Bad | Good deriving (Eq, Show, Ord)
 data Letter = Positive | Negative deriving (Eq, Show, Ord)
 
-student :: Distribution Intelligence
+student :: Subdistribution Intelligence
 student = do
   diff <- distribution [(Easy, 6/10), (Hard, 4/10)]
   intel <- distribution [(Low, 7/10), (High, 3/10)]

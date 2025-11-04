@@ -15,7 +15,7 @@ import Data.MultiSet qualified as MSet
 
 data Door = Left | Middle | Right deriving (Eq, Show)
 
-host :: Door -> Door -> Distribution Door
+host :: Door -> Door -> Subdistribution Door
 host Left   Left   = uniform [Middle, Right]
 host Middle Middle = uniform [Left, Right]
 host Right  Right  = uniform [Left, Middle] 
@@ -26,8 +26,8 @@ host Middle Right = uniform [Left]
 host Right Left = uniform [Middle]
 host Right Middle = uniform [Left]
 
--- normalize montyHall [(Middle,1 % 3),(Right,2 % 3)]
-montyFall :: Distribution Door
+
+montyFall :: Subdistribution Door
 montyFall = do
   car <- uniform [Left,Middle,Right]
   choice <- uniform [Left,Middle,Right]
@@ -36,3 +36,9 @@ montyFall = do
   observe (announcement == Left)
   observe (car /= Left)
   return car
+
+-- >>> montyFall
+-- <Subdistribution>
+-- Validity: 2 % 27
+-- Posterior: [(Middle,1 % 2),(Right,1 % 2)]
+
