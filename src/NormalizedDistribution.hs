@@ -13,14 +13,15 @@ ifThenElse False x y = y
 unsafeFromMaybe :: Maybe a -> a
 unsafeFromMaybe = fromMaybe undefined
 
-normD :: (Eq a) => Distribution (Maybe a) -> Maybe (Distribution a)
-normD d = ifThenElse (validity d == 0) Nothing 
-  (Just (dmap unsafeFromMaybe $ normFilter (/= Nothing) d))
+norm :: (Eq a) => Distribution (Maybe a) -> Maybe (Distribution a)
+norm d = let d' = rescale d in 
+    ifThenElse (validity d' == 0) Nothing 
+        (Just (dmap unsafeFromMaybe $ normFilter (/= Nothing) d'))
 
 
 (>>=) :: (Eq a, Eq b) => Maybe (Distribution a) -> (a -> Maybe (Distribution b)) -> Maybe (Distribution b)
 (>>=) Nothing f = Nothing
-(>>=) (Just d) f = fmap dJoin $ normD $ dmap f d
+(>>=) (Just d) f = fmap dJoin $ norm $ dmap f d
 
 (>>) :: (Eq a, Eq b) => Maybe (Distribution a) -> Maybe (Distribution b) -> Maybe (Distribution b)
 (>>) d f = d >>= const f

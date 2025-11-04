@@ -63,10 +63,10 @@ instance (Eq a, Show a) => Show (Distribution a) where
 showDistribution :: (Eq a, Show a) => Distribution a -> String
 showDistribution d =
   "Validity: " ++ show (validity d) ++ "\n" ++
-  "Posterior: " ++ show (unDistribution (normalize d)) ++ "\n"
+  "Posterior: " ++ show (unDistribution (rescale d)) ++ "\n"
 
-normalize :: Distribution a -> Distribution a
-normalize (Distribution x) = Distribution (distNormalize x)
+rescale :: Distribution a -> Distribution a
+rescale (Distribution x) = Distribution (distNormalize x)
 
 uniform :: (Eq a) => [a] -> Distribution a
 uniform l = fromList (map (, 1 / toRational (length l)) l)
@@ -75,7 +75,7 @@ weightOf :: (Eq a) => a -> Distribution a -> Rational
 weightOf x (Distribution d) = weightOfPoint x d
 
 normFilter :: (Eq a) => (a -> Bool) -> Distribution a -> Distribution a
-normFilter p d = normalize (Distribution (filter (\(x,v) -> p x) (toList d)))
+normFilter p d = rescale (Distribution (filter (\(x,v) -> p x) (toList d)))
 
 dJoin :: (Eq a) => Distribution (Distribution a) -> Distribution a
 dJoin dss = (>>=) dss id

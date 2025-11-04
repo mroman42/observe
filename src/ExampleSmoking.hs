@@ -44,8 +44,8 @@ conditionalSmoking = do
     cancer <- health gene hasTar
     return cancer
 
-conditionalSmokingA :: Maybe (Distribution HasCancer)
-conditionalSmokingA = norm $ do
+conditionalSmokingA :: Distribution HasCancer
+conditionalSmokingA = normalizationBox $ do
     gene <- prevalence
     isSmoker <- smokes gene
     observe (isSmoker == Smoker)
@@ -53,8 +53,8 @@ conditionalSmokingA = norm $ do
     cancer <- health gene hasTar
     return cancer
 
-causalSmoking :: Maybe (Distribution HasCancer)
-causalSmoking = norm $ do
+causalSmoking :: Distribution HasCancer
+causalSmoking = normalizationBox $ do
     gene <- prevalence
     isSmoker <- normalizationBox $ do 
         isSmoker <- smokes gene
@@ -64,8 +64,8 @@ causalSmoking = norm $ do
     cancer <- health gene hasTar        
     return cancer
 
-causalSmokingB :: Maybe (Distribution HasCancer)
-causalSmokingB = norm $ do
+causalSmokingB :: Distribution HasCancer
+causalSmokingB = normalizationBox $ do
     gene <- prevalence
     isSmoker <- return Smoker
     hasTar <- tar isSmoker
