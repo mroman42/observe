@@ -1,11 +1,14 @@
 {-# LANGUAGE RebindableSyntax #-}
-module RebindableNormalization where
+module NormalizedDistribution where
 
 import SubdistributionAux
 import Subdistribution hiding ((>>=), (>>), return)
-import Normalization hiding ((>>=), (>>), return)
 import Prelude hiding ((>>=), (>>), return)
 import Data.Maybe
+
+ifThenElse True  x y = x
+ifThenElse False x y = y
+
 
 unsafeFromMaybe :: Maybe a -> a
 unsafeFromMaybe = fromMaybe undefined
@@ -54,6 +57,7 @@ intervene :: Bool -> Maybe (Distribution ())
 intervene True = return ()
 intervene False = Nothing
 
+force = intervene
 
 cancerDist :: Maybe (Distribution (HasCancer, IsSmoker))
 cancerDist = do
@@ -69,7 +73,7 @@ conditionalSmoking = do
         gene <- prevalence
         isSmoker <- smokes gene
         return (gene, isSmoker)
-    intervene (isSmoker == Smoker)
+    force (isSmoker == Smoker)
     hasTar <- tar isSmoker
     cancer <- health gene hasTar
     return cancer
@@ -78,7 +82,7 @@ causalSmoking :: Maybe (Distribution HasCancer)
 causalSmoking = do
     gene <- prevalence
     isSmoker <- smokes gene
-    intervene (isSmoker == Smoker)
+    force (isSmoker == Smoker)
     hasTar <- tar isSmoker
     cancer <- health gene hasTar
     return cancer

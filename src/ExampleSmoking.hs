@@ -4,7 +4,7 @@ module ExampleSmoking where
 import Data.Maybe
 import Subdistribution
 import Prelude hiding ((>>=), (>>), return)
-import Normalization    
+import NormalizationBoxes    
 
 data HasGene = Gene | NoGene deriving (Eq, Show)
 data HasTar = Tar | NoTar deriving (Eq, Show)

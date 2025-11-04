@@ -1,6 +1,6 @@
 {-# LANGUAGE RebindableSyntax #-}
 
-module Normalization where
+module NormalizationBoxes where
 
 
 import Data.Maybe

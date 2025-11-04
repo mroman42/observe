@@ -1,6 +1,6 @@
 {-# LANGUAGE RebindableSyntax #-}
 
-module ExampleDamascus where
+module ExampleXorBlackmail where
 
 import Subdistribution
 import Prelude hiding ((>>=), (>>), return)

@@ -37,14 +37,14 @@ checkCoincideThis (x,r) ((y,s):l) = ((x == y) && (r == s)) || checkCoincideThis 
 
 checkMaybeThis :: (Eq a) => (a,Rational) -> [(a,Rational)] -> Maybe [(a,Rational)]
 checkMaybeThis (x,r) [] = Nothing
-checkMaybeThis (x,r) ((y,s):u)
- | (x == y) && (r == s) = Just u
- | otherwise = do
-    v <- checkMaybeThis (x,r) u
-    return ((y,s) : v)
+checkMaybeThis (x,r) ((y,s):u) | (x == y) && (r == s) = Just u
+                               | otherwise = do
+                                  v <- checkMaybeThis (x,r) u
+                                  return ((y,s) : v)
 
 checkMaybe :: (Eq a) => [(a,Rational)] -> [(a,Rational)] -> Maybe ()
 checkMaybe [] [] = return ()
+checkMaybe [] v  = return ()
 checkMaybe ((x,r):u) v = do
   w <- checkMaybeThis (x,r) v
   checkMaybe u w

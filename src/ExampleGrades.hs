@@ -1,6 +1,6 @@
 {-# LANGUAGE RebindableSyntax #-}
 
-module ExampleSailor where
+module ExampleGrades where
 
 import Subdistribution
 import Prelude hiding ((>>=), (>>), return, Left, Right)

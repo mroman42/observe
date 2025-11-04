@@ -1,6 +1,7 @@
 {-# LANGUAGE RebindableSyntax #-}
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use <&>" #-}
+
 module Subdistribution where
 
 import Prelude hiding ((>>=), return)
@@ -22,7 +23,7 @@ validity (Distribution l) = totalWeight l
 instance (Eq a) => Eq (Distribution a) where
   (==) :: Distribution a -> Distribution a -> Bool
   (==) (Distribution u) (Distribution v) = 
-    isJust $ checkMaybe (reweight u) (reweight v)
+    isJust $ checkMaybe (condense u) (condense v)
 
 (>>=) :: (Eq a, Eq b) => Distribution a -> (a -> Distribution b) -> Distribution b
 (>>=) (Distribution d) f = Distribution $ distBind d (unDistribution . f)

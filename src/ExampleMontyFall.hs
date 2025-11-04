@@ -1,6 +1,6 @@
 {-# LANGUAGE RebindableSyntax #-}
 
-module ExampleMontyHall where
+module ExampleMontyFall where
 
 import Subdistribution
 import Prelude hiding ((>>=), (>>), return, Left, Right)

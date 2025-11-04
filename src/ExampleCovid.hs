@@ -1,4 +1,5 @@
 {-# LANGUAGE RebindableSyntax #-}
+
 module ExampleCovid where
 
 import Prelude hiding ((>>=), (>>), return)

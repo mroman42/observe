@@ -1,5 +1,7 @@
 {-# LANGUAGE RebindableSyntax #-}
-module ExampleSleepingTwo where
+
+module ExampleSleepingBeauty where
+
 import Subdistribution
 import Prelude hiding ((>>=), (>>), return, Left, Right)
 
