@@ -42,7 +42,7 @@ Do-notation with interchange is an internal language for copy-discard monoidal c
 
 ## Interventions
 
-Observe now allows interventions in the internal language of the [magmoid of normalization](https://arxiv.org/pdf/2510.01131).
+Observe allows interventions in the internal language of the [magmoid of normalization](https://arxiv.org/pdf/2510.01131).
 This allows us to write both observations and interventions in a unified language that does not need a normalization primitive.
 
 ``` haskell
