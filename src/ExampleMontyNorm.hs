@@ -3,7 +3,7 @@
 module ExampleMontyNorm where
 
 import NormalizedDistribution
-import SubdistributionAux
+import Measure
 import Subdistribution qualified as Sub --hiding ((>>=), (>>), return)
 import Prelude hiding ((>>=), (>>), return, Left, Right)
 import Data.Maybe

@@ -4,9 +4,11 @@ module Measure
   ( Measure (..)
   , measBind
   , measReturn
+  , measNormalize
   , Distributional (..)
   , validity
   , uniform
+  , condense
   ) where
 
 import Prelude
@@ -101,7 +103,7 @@ measReturn x = Measure [(x,1)]
 totalWeight :: [(a,Rational)] -> Rational
 totalWeight l = sum (map snd l)
 
-distNormalize :: (Eq a) => [(a,Rational)] -> [(a,Rational)]
-distNormalize l = map (\(x,r) -> (x,r / totalWeight l)) l
+measNormalize :: (Eq a) => [(a,Rational)] -> [(a,Rational)]
+measNormalize l = map (\(x,r) -> (x,r / totalWeight l)) l
 
 

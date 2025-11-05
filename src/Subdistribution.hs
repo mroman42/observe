@@ -4,57 +4,70 @@
 
 module Subdistribution where
 
-import Prelude hiding ((>>=), return)
+import Prelude hiding ((>>=), (>>), return, map)
+import Prelude qualified as P
 import Data.Ord
 import Data.Maybe
 import Data.List ( maximumBy )
-import GHC.Generics (Generic)
-import Measure
+import Distribution qualified as D hiding ((>>=), (>>), return)
+import Distribution (Distribution (..), distribution)
+import Measure (measNormalize, condense, Measure (..))
 
-data Subdistribution a where
-  Subdistribution :: (Eq a) => Measure a -> Subdistribution a
 
-unSubdistribution :: Subdistribution a -> [(a, Rational)]
-unSubdistribution (Subdistribution d) = d
+newtype Subdistribution a = Subdistribution (Distribution (Maybe a))
 
-validity :: Subdistribution a -> Rational
-validity (Subdistribution l) = totalWeight l
+byDefinition :: Subdistribution a -> Distribution (Maybe a)
+byDefinition (Subdistribution s) = s
 
-instance (Eq a) => Eq (Subdistribution a) where
-  (==) :: Subdistribution a -> Subdistribution a -> Bool
-  (==) (Subdistribution u) (Subdistribution v) = 
-    isJust $ checkMaybe (condense u) (condense v)
+toList :: (Eq a) => Subdistribution a -> [(a, Rational)]
+toList (Subdistribution d) = 
+  P.map (\(x,v) -> (fromMaybe undefined x, v)) $ 
+  filter (\(x,v) -> isJust x) $ 
+  D.toList d
+
+--fromList :: (Eq a) => [(a,Rational)] -> Subdistribution a
+--fromList = Subdistribution . . condense
+--  where
+
+
+validity :: (Eq a) => Subdistribution a -> Rational
+validity (Subdistribution d) = D.weightOf True (D.bind d (D.pure . isJust))
+
+uniform :: (Eq a) => [a] -> Subdistribution a
+uniform l = Subdistribution $ D.uniform $ P.map Just l
+
+empty :: (Eq a) => Subdistribution a
+empty = Subdistribution $ D.pure Nothing
+
+-- instance (Eq a) => Eq (Subdistribution a) where
+--    (==) :: Subdistribution a -> Subdistribution a -> Bool
+--    (==) (Subdistribution u) (Subdistribution v) = 
+--     isJust $ checkMaybe (condense u) (condense v)
 
 (>>=) :: (Eq a, Eq b) => Subdistribution a -> (a -> Subdistribution b) -> Subdistribution b
-(>>=) (Subdistribution d) f = Subdistribution $ distBind d (unSubdistribution . f)
+(>>=) (Subdistribution d) f = Subdistribution $ D.bind d (byDefinition . fstar)
+  where
+    fstar (Just a) = f a
+    fstar Nothing = empty
 
-dmap :: (Eq a, Eq b) => (a -> b) -> Subdistribution a -> Subdistribution b
-dmap f d = d >>= (return . f)
+map :: (Eq a, Eq b) => (a -> b) -> Subdistribution a -> Subdistribution b
+map f d = d >>= (return . f)
 
-(>>) :: (Eq a, Eq b) => 
-  Subdistribution a -> Subdistribution b -> Subdistribution b
+(>>) :: (Eq a, Eq b) => Subdistribution a -> Subdistribution b -> Subdistribution b
 (>>) d f = d >>= const f
 
 return :: (Eq a) => a -> Subdistribution a
-return x = Subdistribution [(x,1)]
+return x = uniform [x]
 
+pure = return
 
 observe :: Bool -> Subdistribution ()
-observe True = return ()
-observe False = absurd
+observe True = Subdistribution (D.pure (Just ()))
+observe False = Subdistribution (D.pure Nothing)
 
-assert :: Bool -> Subdistribution ()
-assert = observe
 
-absurd :: (Eq a) => Subdistribution a
-absurd = Subdistribution []
 
-fromList, distribution :: (Eq a) => [(a,Rational)] -> Subdistribution a
-fromList = Subdistribution . condense
-distribution = Subdistribution.fromList
 
-toList :: (Eq a) => Subdistribution a -> [(a,Rational)]
-toList = unSubdistribution
 
 instance (Eq a, Show a) => Show (Subdistribution a) where
   show :: Eq a => Subdistribution a -> String
@@ -64,19 +77,17 @@ showSubdistribution :: (Eq a, Show a) => Subdistribution a -> String
 showSubdistribution d =
   "<Subdistribution>\n" ++
   "Validity: " ++ show (validity d) ++ "\n" ++
-  "Posterior: " ++ show (unSubdistribution (rescale d)) ++ "\n"
+  "Posterior: " ++ show (rescale d) ++ "\n"
 
-rescale :: Subdistribution a -> Subdistribution a
-rescale (Subdistribution x) = Subdistribution (distNormalize x)
+rescale :: (Eq a) => Subdistribution a -> Distribution a
+rescale xs = Distribution (Measure $ measNormalize $ toList xs)
 
-uniform :: (Eq a) => [a] -> Subdistribution a
-uniform l = fromList (map (, 1 / toRational (length l)) l)
 
-weightOf :: (Eq a) => a -> Subdistribution a -> Rational
-weightOf x (Subdistribution d) = weightOfPoint x d
+-- weightOf :: (Eq a) => a -> Subdistribution a -> Rational
+-- weightOf x (Subdistribution d) = weightOfPoint x d
 
-normFilter :: (Eq a) => (a -> Bool) -> Subdistribution a -> Subdistribution a
-normFilter p d = rescale (Subdistribution (filter (\(x,v) -> p x) (toList d)))
+--normFilter :: (Eq a) => (a -> Bool) -> Subdistribution a -> Subdistribution a
+--normFilter p d = rescale (Subdistribution (filter (\(x,v) -> p x) (M.toList d)))
 
 dJoin :: (Eq a) => Subdistribution (Subdistribution a) -> Subdistribution a
 dJoin dss = (>>=) dss id

@@ -4,8 +4,6 @@ module ExampleMontyHall where
 
 import Subdistribution
 import Prelude hiding ((>>=), (>>), return, Left, Right)
-import Data.MultiSet qualified as MSet
-
 
 -- Suppose you’re on a game show, and you’re given the choice of three doors: Behind one
 -- door is a car; behind the others, goats. You pick a door, say No. 1, and the host, who
@@ -15,7 +13,7 @@ import Data.MultiSet qualified as MSet
 
 data Door = Left | Middle | Right deriving (Eq, Show)
 
-host :: Door -> Door -> Distribution Door
+host :: Door -> Door -> Subdistribution Door
 host Left   Left   = uniform [Middle, Right]
 host Middle Middle = uniform [Left, Right]
 host Right  Right  = uniform [Left, Middle] 
@@ -27,7 +25,7 @@ host Right Left    = uniform [Middle]
 host Right Middle  = uniform [Left]
 
 -- normalize montyHall [(Middle,1 % 3),(Right,2 % 3)]
-montyHall :: Distribution Door
+montyHall :: Subdistribution Door
 montyHall = do
   car <- uniform [Left,Middle,Right]
   choice <- uniform [Left,Middle,Right]

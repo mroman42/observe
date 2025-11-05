@@ -5,15 +5,24 @@
 
 module Distribution 
     ( Distribution (..)
+    , distribution
     , uniform
+    , toList
+    , fromList
+    , weightOf
+    , map
     , (>>=)
     , (>>)
     , return
-    , distribution
+    , bind
+    , next
+    , pure
     ) where
 
-import Prelude hiding ((>>=), (>>), return)
-import Measure
+import Prelude hiding ((>>=), (>>), return, pure, map)
+import Prelude qualified as P
+import Measure (Measure (..))
+import Measure qualified as M
 
 
 data Distribution a where
@@ -23,28 +32,42 @@ distribution :: (Eq a) => [(a, Rational)] -> Distribution a
 distribution = fromList
 
 mkDistribution :: (Eq a) => Measure a -> Distribution a
-mkDistribution m = case validity m of
+mkDistribution m = case M.validity m of
     1 -> Distribution m
     _ -> error "Non-full support for a distribution."
 
-instance Distributional Distribution where
-    toList (Distribution m) = toList m
-    fromList l = mkDistribution (fromList l)
-    weightOf x (Distribution m) = weightOf x m
-    simplify (Distribution m) = Distribution $ simplify m
+
+toList (Distribution m) = M.toList m
+fromList l = mkDistribution (M.fromList l)
+weightOf x (Distribution m) = M.weightOf x m
+simplify (Distribution m) = Distribution $ M.simplify m
 
 distToMeas :: Distribution a -> Measure a
 distToMeas (Distribution a) = a
 
+uniform :: (Eq a) => [a] -> Distribution a
+uniform l = Distribution $ M.uniform l
 
 (>>=) :: (Eq a, Eq b) => Distribution a -> (a -> Distribution b) -> Distribution b
-(>>=) (Distribution d) f = Distribution $ measBind d (distToMeas . f)
+(>>=) (Distribution d) f = Distribution $ M.measBind d (distToMeas . f)
 
 (>>) :: (Eq a, Eq b) => Distribution a -> Distribution b -> Distribution b
 (>>) d f = d >>= const f
 
 return :: (Eq a) => a -> Distribution a
 return x = uniform [x]
+
+bind :: (Eq a, Eq b) => Distribution a -> (a -> Distribution b) -> Distribution b
+bind = (>>=)
+
+next :: (Eq a, Eq b) => Distribution a -> Distribution b -> Distribution b
+next = (>>)
+
+pure :: (Eq a) => a -> Distribution a
+pure = return
+
+map :: (Eq a, Eq b) => (a -> b) -> Distribution a -> Distribution b
+map f (Distribution (Measure d)) = Distribution $ Measure $ P.map (\(x,v) -> (f x, v)) d
 
 instance (Eq a, Show a) => Show (Distribution a) where
   show :: (Eq a) => Distribution a -> String
