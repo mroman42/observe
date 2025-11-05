@@ -14,9 +14,6 @@ module Distribution
     , (>>=)
     , (>>)
     , return
-    , bind
-    , next
-    , pure
     ) where
 
 import Prelude hiding ((>>=), (>>), return, pure, map)
@@ -54,23 +51,26 @@ instance (Eq a) => Eq (Distribution a) where
 
 
 instance FinitaryMonad Distribution where
-    (>>=) :: (Eq a, Eq b) => Distribution a -> (a -> Distribution b) -> Distribution b
-    (>>=) (Distribution d) f = Distribution $ M.measBind d (distToMeas . f)
+    fBind :: (Eq a, Eq b) => Distribution a -> (a -> Distribution b) -> Distribution b
+    fBind (Distribution d) f = Distribution $ M.measBind d (distToMeas . f)
 
-    (>>) :: (Eq a, Eq b) => Distribution a -> Distribution b -> Distribution b
-    (>>) d f = d >>= const f
+    fNext :: (Eq a, Eq b) => Distribution a -> Distribution b -> Distribution b
+    fNext d f = fBind d (const f)
 
-    return :: (Eq a) => a -> Distribution a
-    return x = uniform [x]
+    fReturn :: (Eq a) => a -> Distribution a
+    fReturn x = uniform [x]
 
     fMap :: (Eq a, Eq b) => (a -> b) -> Distribution a -> Distribution b
     fMap = map 
 
-bind :: (Eq a, Eq b) => Distribution a -> (a -> Distribution b) -> Distribution b
-bind = (>>=)
+(>>=) :: (Eq a, Eq b) => Distribution a -> (a -> Distribution b) -> Distribution b
+(>>=) = fBind
 
-next :: (Eq a, Eq b) => Distribution a -> Distribution b -> Distribution b
-next = (>>)
+(>>) :: (Eq a, Eq b) => Distribution a -> Distribution b -> Distribution b
+(>>) = fNext
+
+return :: (Eq a) => a -> Distribution a
+return = fReturn
 
 pure :: (Eq a) => a -> Distribution a
 pure = return
@@ -80,4 +80,4 @@ map f (Distribution (Measure d)) = Distribution $ Measure $ P.map (\(x,v) -> (f 
 
 instance (Eq a, Show a) => Show (Distribution a) where
   show :: (Eq a) => Distribution a -> String
-  show (Distribution (Measure d)) = "<Distribution>\n" ++ show d
+  show (Distribution (Measure d)) = "<Distribution> " ++ show d

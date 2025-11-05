@@ -65,12 +65,14 @@ library
         Subdistribution,
         Measure,
         NormalizationBoxes,
-        NormalizedDistribution
+        NormalizedDistribution,
+        FinitaryMonad,
 
     -- Modules included in this library but not exported.
     other-modules:
         ExampleCovid,
         ExampleDamascus,
+        ExampleRain,
         ExampleGrades,
         ExampleMontyFall,
         ExampleMontyHall,

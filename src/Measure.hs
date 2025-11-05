@@ -9,6 +9,7 @@ module Measure
   , validity
   , uniform
   , condense
+  , totalWeight
   ) where
 
 import Prelude

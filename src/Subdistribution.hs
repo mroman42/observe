@@ -11,13 +11,13 @@ import Data.Maybe
 import Data.List ( maximumBy )
 import Distribution qualified as D hiding ((>>=), (>>), return)
 import Distribution (Distribution (..), distribution)
-import Measure (measNormalize, condense, Measure (..))
-
+import Measure (measNormalize, condense, totalWeight, Measure (..))
+import FinitaryMonad
 
 newtype Subdistribution a = Subdistribution (Distribution (Maybe a))
 
-byDefinition :: Subdistribution a -> Distribution (Maybe a)
-byDefinition (Subdistribution s) = s
+toDistribution :: Subdistribution a -> Distribution (Maybe a)
+toDistribution (Subdistribution s) = s
 
 toList :: (Eq a) => Subdistribution a -> [(a, Rational)]
 toList (Subdistribution d) = 
@@ -25,29 +25,30 @@ toList (Subdistribution d) =
   filter (\(x,v) -> isJust x) $ 
   D.toList d
 
---fromList :: (Eq a) => [(a,Rational)] -> Subdistribution a
---fromList = Subdistribution . . condense
---  where
+subdistribution :: (Eq a) => [(a,Rational)] -> Subdistribution a
+subdistribution = fromList
+
+fromList :: (Eq a) => [(a,Rational)] -> Subdistribution a
+fromList l = Subdistribution $ Distribution $ Measure lm
+  where
+    weightNothing = 1 - totalWeight l
+    lm = (Nothing, weightNothing) : P.map (\(x,v) -> (Just x, v)) l
+
 
 instance (Eq a) => Eq (Subdistribution a) where
   (==) (Subdistribution x) (Subdistribution y) = (x == y)
 
 validity :: (Eq a) => Subdistribution a -> Rational
-validity (Subdistribution d) = D.weightOf True (D.bind d (D.pure . isJust))
+validity (Subdistribution d) = D.weightOf True (fBind d (fReturn . isJust))
 
 uniform :: (Eq a) => [a] -> Subdistribution a
 uniform l = Subdistribution $ D.uniform $ P.map Just l
 
 empty :: (Eq a) => Subdistribution a
-empty = Subdistribution $ D.pure Nothing
-
--- instance (Eq a) => Eq (Subdistribution a) where
---    (==) :: Subdistribution a -> Subdistribution a -> Bool
---    (==) (Subdistribution u) (Subdistribution v) = 
---     isJust $ checkMaybe (condense u) (condense v)
+empty = Subdistribution $ fReturn Nothing
 
 (>>=) :: (Eq a, Eq b) => Subdistribution a -> (a -> Subdistribution b) -> Subdistribution b
-(>>=) (Subdistribution d) f = Subdistribution $ D.bind d (byDefinition . fstar)
+(>>=) (Subdistribution d) f = Subdistribution $ fBind d (toDistribution . fstar)
   where
     fstar (Just a) = f a
     fstar Nothing = empty
@@ -65,8 +66,8 @@ pure :: (Eq a) => a -> Subdistribution a
 pure = return
 
 observe :: Bool -> Subdistribution ()
-observe True = Subdistribution (D.pure (Just ()))
-observe False = Subdistribution (D.pure Nothing)
+observe True = Subdistribution (fReturn (Just ()))
+observe False = Subdistribution (fReturn Nothing)
 
 
 
