@@ -29,6 +29,8 @@ toList (Subdistribution d) =
 --fromList = Subdistribution . . condense
 --  where
 
+instance (Eq a) => Eq (Subdistribution a) where
+  (==) (Subdistribution x) (Subdistribution y) = (x == y)
 
 validity :: (Eq a) => Subdistribution a -> Rational
 validity (Subdistribution d) = D.weightOf True (D.bind d (D.pure . isJust))
@@ -59,6 +61,7 @@ map f d = d >>= (return . f)
 return :: (Eq a) => a -> Subdistribution a
 return x = uniform [x]
 
+pure :: (Eq a) => a -> Subdistribution a
 pure = return
 
 observe :: Bool -> Subdistribution ()
@@ -81,10 +84,6 @@ showSubdistribution d =
 
 rescale :: (Eq a) => Subdistribution a -> Distribution a
 rescale xs = Distribution (Measure $ measNormalize $ toList xs)
-
-
--- weightOf :: (Eq a) => a -> Subdistribution a -> Rational
--- weightOf x (Subdistribution d) = weightOfPoint x d
 
 --normFilter :: (Eq a) => (a -> Bool) -> Subdistribution a -> Subdistribution a
 --normFilter p d = rescale (Subdistribution (filter (\(x,v) -> p x) (M.toList d)))

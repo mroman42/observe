@@ -84,6 +84,10 @@ checkMaybe ((x,r):u) v = do
   w <- checkMaybeThis (x,r) v
   checkMaybe u w
 
+instance (Eq a) => Eq (Measure a) where
+  (==) :: (Eq a) => Measure a -> Measure a -> Bool
+  (==) (Measure m) (Measure n) = isJust $ checkMaybe m n
+
 distMap :: (a -> b) -> [(a,Rational)] -> [(b,Rational)]
 distMap f [] = []
 distMap f ((x,r):l) = (f x, r) : distMap f l

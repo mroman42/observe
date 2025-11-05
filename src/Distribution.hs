@@ -48,9 +48,9 @@ distToMeas (Distribution a) = a
 uniform :: (Eq a) => [a] -> Distribution a
 uniform l = Distribution $ M.uniform l
 
-instance (Eq x) => Eq (Distribution a) where
-    (==) :: Distribution a -> Distribution a -> Distribution a
-    
+instance (Eq a) => Eq (Distribution a) where
+    (==) :: Distribution a -> Distribution a -> Bool
+    (==) (Distribution a) (Distribution b) = (a == b)
 
 
 instance FinitaryMonad Distribution where
@@ -62,6 +62,9 @@ instance FinitaryMonad Distribution where
 
     return :: (Eq a) => a -> Distribution a
     return x = uniform [x]
+
+    fMap :: (Eq a, Eq b) => (a -> b) -> Distribution a -> Distribution b
+    fMap = map 
 
 bind :: (Eq a, Eq b) => Distribution a -> (a -> Distribution b) -> Distribution b
 bind = (>>=)

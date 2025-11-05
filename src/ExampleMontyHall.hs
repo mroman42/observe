@@ -33,3 +33,11 @@ montyHall = do
   observe (choice == Middle)
   observe (announcement == Left)
   return car
+
+montyHall' :: Subdistribution Door
+montyHall' = do
+  car <- uniform [Left,Middle,Right]
+  choice <- return Middle
+  announcement <- host car choice
+  observe (announcement == Left)
+  return car
