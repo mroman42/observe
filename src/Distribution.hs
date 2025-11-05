@@ -23,7 +23,7 @@ import Prelude hiding ((>>=), (>>), return, pure, map)
 import Prelude qualified as P
 import Measure (Measure (..))
 import Measure qualified as M
-
+import FinitaryMonad
 
 data Distribution a where
     Distribution :: (Eq a) => Measure a -> Distribution a
@@ -48,14 +48,20 @@ distToMeas (Distribution a) = a
 uniform :: (Eq a) => [a] -> Distribution a
 uniform l = Distribution $ M.uniform l
 
-(>>=) :: (Eq a, Eq b) => Distribution a -> (a -> Distribution b) -> Distribution b
-(>>=) (Distribution d) f = Distribution $ M.measBind d (distToMeas . f)
+instance (Eq x) => Eq (Distribution a) where
+    (==) :: Distribution a -> Distribution a -> Distribution a
+    
 
-(>>) :: (Eq a, Eq b) => Distribution a -> Distribution b -> Distribution b
-(>>) d f = d >>= const f
 
-return :: (Eq a) => a -> Distribution a
-return x = uniform [x]
+instance FinitaryMonad Distribution where
+    (>>=) :: (Eq a, Eq b) => Distribution a -> (a -> Distribution b) -> Distribution b
+    (>>=) (Distribution d) f = Distribution $ M.measBind d (distToMeas . f)
+
+    (>>) :: (Eq a, Eq b) => Distribution a -> Distribution b -> Distribution b
+    (>>) d f = d >>= const f
+
+    return :: (Eq a) => a -> Distribution a
+    return x = uniform [x]
 
 bind :: (Eq a, Eq b) => Distribution a -> (a -> Distribution b) -> Distribution b
 bind = (>>=)
