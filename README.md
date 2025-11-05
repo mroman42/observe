@@ -40,9 +40,9 @@ montyHall = do
 
 Do-notation with interchange is an internal language for copy-discard monoidal categories. Up to statement interchange, it coincides with the hypergraph representation of a string diagram.
 
-## Interventions
+## Exact interventions
 
-Observe allows interventions in the internal language of the [magmoid of normalization](https://arxiv.org/pdf/2510.01131).
+Observe allows exact interventions in the internal language of the [magmoid of normalization](https://arxiv.org/pdf/2510.01131).
 This allows us to write both observations and interventions in a unified language that does not need a normalization primitive.
 
 ``` haskell
