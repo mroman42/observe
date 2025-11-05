@@ -63,7 +63,7 @@ library
         Observe,
         Distribution,
         Subdistribution,
-        SubdistributionAux,
+        Measure,
         NormalizationBoxes,
         NormalizedDistribution
 
@@ -83,7 +83,7 @@ library
         ExampleSleeping,
         ExampleSleepingBeauty,
         ExampleSmoking,
-        ExampleXorBlackmail
+        ExampleXorBlackmail,
 
     -- LANGUAGE extensions used by modules in this package.
     default-extensions:

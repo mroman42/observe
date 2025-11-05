@@ -9,10 +9,10 @@ import Data.Ord
 import Data.Maybe
 import Data.List ( maximumBy )
 import GHC.Generics (Generic)
-import SubdistributionAux
+import Measure
 
 data Subdistribution a where
-  Subdistribution :: (Eq a) => [(a, Rational)] -> Subdistribution a
+  Subdistribution :: (Eq a) => Measure a -> Subdistribution a
 
 unSubdistribution :: Subdistribution a -> [(a, Rational)]
 unSubdistribution (Subdistribution d) = d
@@ -51,7 +51,7 @@ absurd = Subdistribution []
 
 fromList, distribution :: (Eq a) => [(a,Rational)] -> Subdistribution a
 fromList = Subdistribution . condense
-distribution = fromList
+distribution = Subdistribution.fromList
 
 toList :: (Eq a) => Subdistribution a -> [(a,Rational)]
 toList = unSubdistribution

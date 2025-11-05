@@ -4,35 +4,48 @@
 
 
 module Distribution 
-    ( uniform
+    ( Distribution (..)
+    , uniform
     , (>>=)
-    , Distribution (..)
+    , (>>)
+    , return
+    , distribution
     ) where
 
-
-import Prelude hiding ((>>=), return)
-import SubdistributionAux
-import Subdistribution qualified as Sub
-import Subdistribution (unSubdistribution)
+import Prelude hiding ((>>=), (>>), return)
+import Measure
 
 
 data Distribution a where
-    Distribution :: (Eq a) => Sub.Subdistribution a -> Distribution a
+    Distribution :: (Eq a) => Measure a -> Distribution a
 
-distToSub :: Distribution a -> Sub.Subdistribution a
-distToSub (Distribution a) = a
+distribution :: (Eq a) => [(a, Rational)] -> Distribution a
+distribution = fromList
 
-fromSubdistribution :: (Eq a) => Sub.Subdistribution a -> Distribution a    
-fromSubdistribution d = case Sub.validity d == 1 of 
-    True -> Distribution d 
-    False -> error "This is a non-total distribution"
+mkDistribution :: (Eq a) => Measure a -> Distribution a
+mkDistribution m = case validity m of
+    1 -> Distribution m
+    _ -> error "Non-full support for a distribution."
 
-uniform :: (Eq a) => [a] -> Distribution a
-uniform = Distribution . Sub.uniform
+instance Distributional Distribution where
+    toList (Distribution m) = toList m
+    fromList l = mkDistribution (fromList l)
+    weightOf x (Distribution m) = weightOf x m
+    simplify (Distribution m) = Distribution $ simplify m
+
+distToMeas :: Distribution a -> Measure a
+distToMeas (Distribution a) = a
+
 
 (>>=) :: (Eq a, Eq b) => Distribution a -> (a -> Distribution b) -> Distribution b
-(>>=) (Distribution d) f = Distribution $ d Sub.>>= (distToSub . f)
+(>>=) (Distribution d) f = Distribution $ measBind d (distToMeas . f)
+
+(>>) :: (Eq a, Eq b) => Distribution a -> Distribution b -> Distribution b
+(>>) d f = d >>= const f
+
+return :: (Eq a) => a -> Distribution a
+return x = uniform [x]
 
 instance (Eq a, Show a) => Show (Distribution a) where
   show :: (Eq a) => Distribution a -> String
-  show (Distribution d) = "<Distribution>\n" ++ show (Sub.unSubdistribution d)
+  show (Distribution (Measure d)) = "<Distribution>\n" ++ show d

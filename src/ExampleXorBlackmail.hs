@@ -2,8 +2,8 @@
 
 module ExampleXorBlackmail where
 
-import Subdistribution
 import Prelude hiding ((>>=), (>>), return)
+import Subdistribution
 import Data.MultiSet qualified as MSet
 
 
@@ -14,7 +14,7 @@ isIn :: (Ord a) => a -> MSet.MultiSet a -> Bool
 isIn = MSet.member
 
 
-xorBlackmail :: Strategy -> Distribution Termites
+xorBlackmail :: Strategy -> Subdistribution Termites
 xorBlackmail strategy = do
   termites <- uniform [Infested, Clean]
   prediction <- case strategy of
@@ -27,3 +27,15 @@ xorBlackmail strategy = do
 
 data Termites = Infested | Clean deriving (Eq, Show, Ord)  
 data Strategy = Pay | Refuse deriving (Eq, Show, Ord)
+
+
+
+-- >>> xorBlackmail Refuse
+-- <Subdistribution>
+-- Validity: 9 % 10
+-- Posterior: [(Infested,1 % 2),(Clean,1 % 2)]
+
+-- >>> xorBlackmail Pay
+-- <Subdistribution>
+-- Validity: 1 % 1
+-- Posterior: [(Infested,1 % 2),(Clean,1 % 2)]

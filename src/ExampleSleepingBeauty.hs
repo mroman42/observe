@@ -21,14 +21,14 @@ data Coin = Heads | Tails  deriving (Eq, Show, Ord)
 data Day = Monday | Tuesday  deriving (Eq, Show, Ord)
 
 
-sleeping1 :: Distribution Coin
+sleeping1 :: Subdistribution Coin
 sleeping1 = do
   coin <- uniform [Heads, Tails]
   awakening <- uniform [(Heads, Monday), (Heads, Tuesday), (Tails, Monday)]
   assert (coin == fst awakening)
   return coin
 
-sleeping2 :: Distribution Coin
+sleeping2 :: Subdistribution Coin
 sleeping2 = do
   coin <- uniform [Heads, Tails]
   awakening <- case coin of
@@ -36,13 +36,3 @@ sleeping2 = do
     Tails -> uniform [(Tails, Monday)]
   assert (coin == fst awakening)
   return coin
-
-
--- sleepingWhere :: Distribution Coin
--- sleepingWhere = do
---   coin <- uniform [Heads, Tails]
---   observe (Awakening `isIn` (case coin of
---     Heads -> multiset [Awakening, Awakening]
---     Tails -> multiset [Awakening]))
---   return coin  
-

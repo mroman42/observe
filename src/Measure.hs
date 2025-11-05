@@ -1,10 +1,43 @@
 {-# LANGUAGE RebindableSyntax #-}
-module SubdistributionAux where
+
+module Measure 
+  ( Measure (..)
+  , measBind
+  , measReturn
+  , Distributional (..)
+  , validity
+  , uniform
+  ) where
 
 import Prelude
 import Data.Ord
 import Data.Maybe
 import Data.List ( maximumBy )
+
+class Distributional d where
+  fromList :: (Eq a) => [(a, Rational)] -> d a
+  toList :: (Eq a) => d a -> [(a, Rational)]
+  weightOf :: (Eq a) => a -> d a -> Rational
+  simplify :: (Eq a) => d a -> d a
+
+validity :: (Distributional d, Eq a) => d a -> Rational
+validity xs = sum $ map snd $ toList xs
+
+uniform :: (Distributional d, Eq a) => [a] -> d a
+uniform l = fromList $ map (\x -> (x, uniformWeight)) l
+  where
+    uniformWeight = 1 / (fromIntegral (length l))
+
+
+newtype Measure a = Measure [(a, Rational)]
+
+instance Distributional Measure where
+  toList (Measure l) = l
+  fromList l = Measure l
+  weightOf x (Measure l) = weightOfPoint x l
+  simplify (Measure l) = Measure $ reweight $ removeZeroes l
+
+
 
 removeZeroes :: [(a, Rational)] -> [(a, Rational)]
 removeZeroes [] = []
@@ -39,8 +72,8 @@ checkMaybeThis :: (Eq a) => (a,Rational) -> [(a,Rational)] -> Maybe [(a,Rational
 checkMaybeThis (x,r) [] = Nothing
 checkMaybeThis (x,r) ((y,s):u) | (x == y) && (r == s) = Just u
                                | otherwise = do
-                                  v <- checkMaybeThis (x,r) u
-                                  return ((y,s) : v)
+                                    v <- checkMaybeThis (x,r) u
+                                    return ((y,s) : v)
 
 checkMaybe :: (Eq a) => [(a,Rational)] -> [(a,Rational)] -> Maybe ()
 checkMaybe [] [] = return ()
@@ -56,11 +89,19 @@ distMap f ((x,r):l) = (f x, r) : distMap f l
 distJoin :: (Eq a) => [([(a,Rational)],Rational)] -> [(a,Rational)]
 distJoin = condense . concatMap (\(u, s) -> map (\(x,r) -> (x, r * s)) u)
 
-distBind :: (Eq a, Eq b) => [(a, Rational)] -> (a -> [(b, Rational)]) -> [(b, Rational)]
-distBind d f = distJoin $ distMap f d
+wlBind :: (Eq a, Eq b) => [(a, Rational)] -> (a -> [(b, Rational)]) -> [(b, Rational)]
+wlBind d f = distJoin $ distMap f d
+
+measBind :: (Eq a, Eq b) => Measure a -> (a -> Measure b) -> Measure b
+measBind (Measure xs) f = Measure $ wlBind xs (toList . f)
+
+measReturn :: (Eq a) => a -> Measure a
+measReturn x = Measure [(x,1)]
 
 totalWeight :: [(a,Rational)] -> Rational
 totalWeight l = sum (map snd l)
 
 distNormalize :: (Eq a) => [(a,Rational)] -> [(a,Rational)]
 distNormalize l = map (\(x,r) -> (x,r / totalWeight l)) l
+
+
