@@ -52,6 +52,10 @@ instance (Eq a, Show a) => Show (Normalized a) where
 (>>) :: (Eq a, Eq b) => Normalized a -> Normalized b -> Normalized b
 (>>) d f = d >>= const f
 
+intervene :: Bool -> Normalized ()
+intervene True = uniform [()]
+intervene False = uniform []
+
 uniform :: (Eq a) => [a] -> Normalized a
 uniform xs = Normalized $ Just $ D.uniform xs
 

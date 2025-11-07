@@ -28,12 +28,6 @@ health NoGene Tar = distribution [(Cancer, 2/5), (NoCancer, 3/5)]
 health Gene NoTar = distribution [(Cancer, 3/10), (NoCancer, 7/10)]
 health NoGene NoTar = distribution [(Cancer, 2/10), (NoCancer, 8/10)]
 
-intervene :: Bool -> Normalized ()
-intervene True = uniform [()]
-intervene False = uniform []
-
-force = intervene
-
 
 cancerDist :: Normalized (HasCancer, IsSmoker)
 cancerDist = do
@@ -51,7 +45,7 @@ conditionalSmoking = do
         gene <- prevalence
         isSmoker <- smokes gene
         return (gene, isSmoker)
-    force (isSmoker == Smoker)
+    intervene (isSmoker == Smoker)
     hasTar <- tar isSmoker
     cancer <- health gene hasTar
     return cancer
@@ -62,7 +56,7 @@ causalSmoking :: Normalized HasCancer
 causalSmoking = do
     gene <- prevalence
     isSmoker <- smokes gene
-    force (isSmoker == Smoker)
+    intervene (isSmoker == Smoker)
     hasTar <- tar isSmoker
     cancer <- health gene hasTar
     return cancer
