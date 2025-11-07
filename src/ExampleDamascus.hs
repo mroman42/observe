@@ -5,8 +5,9 @@ module ExampleDamascus where
 import Subdistribution
 import Prelude hiding ((>>=), (>>), return)
 
+-- Cheating Death in Damascus with a random coin.
 
-deathInDamascus :: Strategy -> Distribution Outcome
+deathInDamascus :: Strategy -> Subdistribution Outcome
 deathInDamascus f = do
   merchant <- uniform [Fleeing, Staying, Random]
   death <- case merchant of
@@ -16,7 +17,22 @@ deathInDamascus f = do
   coin <- uniform [True, False]
   observe (f == merchant)
   return $ outcome (flee merchant coin) death
+
+-- >>> deathInDamascus Fleeing
+-- <Subdistribution>
+-- Validity: 1 % 3
+-- Posterior: <Distribution> [(MerchantTravelsAndMeetsDeath,1 % 1)]
+
+-- >>> deathInDamascus Staying
+-- <Subdistribution>
+-- Validity: 1 % 3
+-- Posterior: <Distribution> [(MerchantMeetsDeath,1 % 1)]
     
+-- >>> deathInDamascus Random
+-- <Subdistribution>
+-- Validity: 1 % 3
+-- Posterior: <Distribution> [(MerchantTravelsAndMeetsDeath,1 % 4),(MerchantEscapes,1 % 4),(MerchantTravelsAndEscapes,1 % 4),(MerchantMeetsDeath,1 % 4)]
+
 flee :: Strategy -> Bool -> City
 flee Fleeing _ = Aleppo
 flee Staying _ = Damascus

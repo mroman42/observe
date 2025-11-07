@@ -59,6 +59,10 @@ map f d = d >>= (return . f)
 (>>) :: (Eq a, Eq b) => Subdistribution a -> Subdistribution b -> Subdistribution b
 (>>) d f = d >>= const f
 
+(<%>) :: (Eq a, Eq b) => (a -> b) -> (Subdistribution a -> Subdistribution b)
+f <%> d = map f d
+
+
 return :: (Eq a) => a -> Subdistribution a
 return x = uniform [x]
 
@@ -86,8 +90,8 @@ showSubdistribution d =
 rescale :: (Eq a) => Subdistribution a -> Distribution a
 rescale xs = Distribution (Measure $ measNormalize $ toList xs)
 
---normFilter :: (Eq a) => (a -> Bool) -> Subdistribution a -> Subdistribution a
---normFilter p d = rescale (Subdistribution (filter (\(x,v) -> p x) (M.toList d)))
-
 dJoin :: (Eq a) => Subdistribution (Subdistribution a) -> Subdistribution a
 dJoin dss = (>>=) dss id
+
+--subdFilterMaybe :: (Eq a) => (a -> Bool) -> Subdistribution a -> Subdistribution a
+--subdFilterMaybe f (Subdistribution xs) = 

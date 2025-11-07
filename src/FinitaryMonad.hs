@@ -6,3 +6,5 @@ class FinitaryMonad m where
     fReturn :: (Eq a) => a -> m a
     fMap :: (Eq a, Eq b) => (a -> b) -> m a -> m b
 
+fJoin :: (FinitaryMonad m, Eq a, Eq (m a)) => m (m a) -> m a
+fJoin xs = fBind xs id

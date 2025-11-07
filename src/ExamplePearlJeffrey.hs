@@ -1,8 +1,4 @@
 {-# LANGUAGE RebindableSyntax #-}
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Use let" #-}
-{-# HLINT ignore "Use join" #-}
-{-# HLINT ignore "Redundant bracket" #-}
 
 module ExamplePearlJeffrey where
 
@@ -22,38 +18,38 @@ neg :: TestResult -> TestResult
 neg Positive = Negative
 neg Negative = Positive
 
-prior :: Distribution Health
-prior = distribution [(Healthy, 99/100), (Ill, 1/100)]
+prior :: Subdistribution Health
+prior = subdistribution [(Healthy, 99/100), (Ill, 1/100)]
 
-test :: Health -> Distribution TestResult
-test Healthy = distribution [(Positive, 5/100), (Negative, 95/100)]
-test Ill = distribution [(Positive, 90/100), (Negative, 10/100)]
+test :: Health -> Subdistribution TestResult
+test Healthy = subdistribution [(Positive, 5/100), (Negative, 95/100)]
+test Ill = subdistribution [(Positive, 90/100), (Negative, 10/100)]
 
-experimentPearl :: Distribution Health
+experimentPearl :: Subdistribution Health
 experimentPearl = do
   patient <- prior
   result <- test patient
-  reading <- distribution [(result, 80/100), (neg result, 20/100)]
+  reading <- subdistribution [(result, 80/100), (neg result, 20/100)]
   observe (reading == Positive)
   return patient
 
-experimentPearl2 :: Distribution Health
+experimentPearl2 :: Subdistribution Health
 experimentPearl2 = do
   patient <- prior
   result <- test patient
-  reading <- distribution [ (Positive, 80/100), (Negative, 20/100) ]
+  reading <- subdistribution [ (Positive, 80/100), (Negative, 20/100) ]
   observe (reading == result)
   return patient
 
-experimentPearl3 :: Distribution Health
+experimentPearl3 :: Subdistribution Health
 experimentPearl3 = do
-  procedure <- distribution [
+  procedure <- subdistribution [
     (do patient <- prior ; r <- test patient ; observe (r == Positive) ; return patient, 80/100) ,
     (do patient <- prior ; r <- test patient ; observe (r == Negative) ; return patient, 20/100) ]
   procedure
 
 
-experimentJeffrey :: Distribution Health
+experimentJeffrey :: Subdistribution Health
 experimentJeffrey = do
   patient1 <- prior
   result1 <- test patient1
@@ -61,9 +57,9 @@ experimentJeffrey = do
   patient2 <- prior
   result2 <- test patient2
   observe (result2 == Negative)
-  distribution [(patient1, 80/100), (patient2, 20/100)]
+  subdistribution [(patient1, 80/100), (patient2, 20/100)]
 
-experimentJeffrey2 :: Distribution Health
+experimentJeffrey2 :: Subdistribution Health
 experimentJeffrey2 = do
   procedure <- return (do 
     patient <- prior
@@ -73,34 +69,32 @@ experimentJeffrey2 = do
   (p2, r2) <- procedure
   observe (r1 == Positive)
   observe (r2 == Negative)
-  distribution [(p1, 80/100), (p2, 20/100)]
+  subdistribution [(p1, 80/100), (p2, 20/100)]
 
 -- Applicative-like combinators
-cbn :: (Eq a) => a -> Distribution a
+cbn :: (Eq a) => a -> Subdistribution a
 cbn = return  
 
-(<%>) :: (Eq a, Eq b) => (a -> b) -> (Distribution a -> Distribution b)
-f <%> d = dmap f d
 
-observeBn :: Distribution Bool -> Distribution ()
+observeBn :: Subdistribution Bool -> Subdistribution ()
 observeBn d = do
   x <- d
   observe x
   return ()
 
-experimentPearl4 :: Distribution Health
+experimentPearl4 :: Subdistribution Health
 experimentPearl4 = do
   patient <- prior
   result <- cbn (test patient)
   r1 <- result
-  reading <- distribution [(r1, 80/100), (neg r1, 20/100)]
+  reading <- subdistribution [(r1, 80/100), (neg r1, 20/100)]
   observe (reading == Positive)
   return patient
 
-experiment :: Distribution Health
+experiment :: Subdistribution Health
 experiment = do
   patient <- cbn (prior)
   result <- test <%> patient
-  reading <- distribution [(Positive, 80/100), (Negative, 20/100)]
+  reading <- subdistribution [(Positive, 80/100), (Negative, 20/100)]
   _ <- observeBn ((reading ==) <%> result)
   patient

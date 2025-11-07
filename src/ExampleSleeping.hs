@@ -19,10 +19,16 @@ data Coin = Heads | Tails  deriving (Eq, Show, Ord)
 data Awakening = Awakening deriving (Eq, Show, Ord)
 
 
-sleepingBeauty :: Distribution Coin
+sleepingBeauty :: Subdistribution Coin
 sleepingBeauty = do
   coin <- uniform [Heads, Tails]
   observe (Awakening `isIn` (case coin of
     Heads -> multiset [Awakening, Awakening]
     Tails -> multiset [Awakening]))
   return coin
+
+
+--- >>> sleepingBeauty
+-- <Subdistribution>
+-- Validity: 1 % 1
+-- Posterior: <Distribution> [(Heads,1 % 2),(Tails,1 % 2)]

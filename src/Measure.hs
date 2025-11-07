@@ -40,7 +40,13 @@ instance Distributional Measure where
   weightOf x (Measure l) = weightOfPoint x l
   simplify (Measure l) = Measure $ reweight $ removeZeroes l
 
+removeMaybes :: [(Maybe a, Rational)] -> [(a, Rational)]
+removeMaybes [] = []
+removeMaybes ((Just x, v):l) = (x,v) : removeMaybes l
+removeMaybes ((Nothing, v):l) = removeMaybes l
 
+measFilterMaybe :: Measure (Maybe a) -> Measure a
+measFilterMaybe (Measure xs) = Measure $ removeMaybes xs
 
 removeZeroes :: [(a, Rational)] -> [(a, Rational)]
 removeZeroes [] = []

@@ -20,7 +20,7 @@ multiset = MSet.fromList
 
 
 -- This code solves Jacobs' question on Covid tests using Pearl's update.
--- validity positiveTest is 17/40
+
 positiveTest :: Subdistribution ()
 positiveTest = do
     individual <- subdistribution [(Ill, 1/20), (Healthy, 19/20)]
@@ -28,8 +28,13 @@ positiveTest = do
     observe (result == Pos)
     return ()
 
--- validity threeTest 381 % 4000
--- normalized update [(Ill,27 % 635),(Healthy,608 % 635)]
+-- >>> positiveTest
+-- <Subdistribution>
+-- Validity: 17 % 40
+-- Posterior: <Distribution> [((),1 % 1)]
+
+
+
 threeTest :: Subdistribution Individual
 threeTest = do
     individual <- subdistribution [(Ill, 1/20), (Healthy, 19/20)]
@@ -41,8 +46,13 @@ threeTest = do
     observe (result3 == Neg)
     return individual
 
--- validity threeTest 1143 % 4000
--- normalized update [(Ill,27 % 635),(Healthy,608 % 635)]
+-- >>> threeTest
+-- <Subdistribution>
+-- Validity: 381 % 4000
+-- Posterior: <Distribution> [(Ill,27 % 635),(Healthy,608 % 635)]
+
+
+
 threeUnorderedTest :: Subdistribution Individual
 threeUnorderedTest = do
   individual <- subdistribution [(Ill, 1/20), (Healthy, 19/20)]
@@ -51,3 +61,8 @@ threeUnorderedTest = do
   result3 <- testing individual
   observe (multiset [result1,result2,result3] == multiset [Pos,Pos,Neg])
   return individual
+
+-- >>> threeUnorderedTest
+-- <Subdistribution>
+-- Validity: 1143 % 4000
+-- Posterior: <Distribution> [(Ill,27 % 635),(Healthy,608 % 635)]

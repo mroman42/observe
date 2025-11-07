@@ -26,3 +26,4 @@ umbrella = do
 
 
 -- >>> umbrella        
+-- <Distribution> [(Yes,9 % 20),(No,11 % 20)]
