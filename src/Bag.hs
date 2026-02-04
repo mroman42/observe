@@ -3,9 +3,7 @@
 {-# HLINT ignore "Use <&>" #-}
 
 
-module Bag
-    ( 
-    ) where
+module Bag where
 
 import Prelude hiding ((>>=), (>>), return, pure, map)
 import Prelude qualified as P
@@ -29,6 +27,8 @@ instance (Eq a) => Eq (Bag a) where
 bagReturn :: (Eq a) => a -> Bag a
 bagReturn x = Bag [(x,1)]
 
+bagAdd :: (Eq a) => Bag a -> Bag a -> Bag a
+bagAdd (Bag u) (Bag v) = Bag $ condense (u ++ v)
 
 instance FinitaryMonad Bag where
   fBind :: (Eq a, Eq b) => Bag a -> (a -> Bag b) -> Bag b
@@ -41,3 +41,8 @@ instance FinitaryMonad Bag where
 
   fMap :: (Eq a, Eq b) => (a -> b) -> Bag a -> Bag b
   fMap f (Bag u) = Bag $ sMap f u
+
+
+instance (Eq a, Show a) => Show (Bag a) where
+  show :: (Eq a) => Bag a -> String
+  show (Bag d) = "<Bag> " ++ show d
