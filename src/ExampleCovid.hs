@@ -21,12 +21,12 @@ multiset = MSet.fromList
 
 -- This code solves Jacobs' question on Covid tests using Pearl's update.
 
-positiveTest :: Subdistribution ()
+positiveTest :: Subdistribution Individual
 positiveTest = do
     individual <- subdistribution [(Ill, 1/20), (Healthy, 19/20)]
     result <- testing individual
     observe (result == Pos)
-    return ()
+    return individual
 
 -- >>> positiveTest
 -- <Subdistribution>

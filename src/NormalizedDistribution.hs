@@ -1,4 +1,6 @@
 {-# LANGUAGE RebindableSyntax #-}
+{-# LANGUAGE QualifiedDo #-}
+
 module NormalizedDistribution where
 
 import Subdistribution qualified as S hiding ((>>=), (>>), return)

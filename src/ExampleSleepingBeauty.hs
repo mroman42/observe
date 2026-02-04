@@ -25,7 +25,7 @@ sleeping1 :: Subdistribution Coin
 sleeping1 = do
   coin <- uniform [Heads, Tails]
   awakening <- uniform [(Heads, Monday), (Heads, Tuesday), (Tails, Monday)]
-  assert (coin == fst awakening)
+  observe (coin == fst awakening)
   return coin
 
 sleeping2 :: Subdistribution Coin
@@ -34,5 +34,5 @@ sleeping2 = do
   awakening <- case coin of
     Heads -> uniform [(Heads, Monday), (Heads, Tuesday)]
     Tails -> uniform [(Tails, Monday)]
-  assert (coin == fst awakening)
+  observe (coin == fst awakening)
   return coin

@@ -1,10 +1,12 @@
 {-# LANGUAGE RebindableSyntax #-}
+{-# LANGUAGE QualifiedDo #-}
 
 module ExampleMontyNorm where
 
 import Prelude hiding ((>>=), (>>), return, Left, Right)
 import NormalizedDistribution
 import Subdistribution qualified as S
+import Subdistribution (Subdistribution(Subdistribution))
 
 
 
@@ -49,7 +51,7 @@ montyHall2 = do
   intervene (announcement == Left)
   return car
 --- >>> montyHall2
--- Just <Distribution> [(Middle,1 % 3),(Right,2 % 3)]  
+-- Just <Distribution> [(Middle,1 % 3),(Right,2 % 3)]
   
 
 
@@ -61,3 +63,25 @@ montyHall3 = do
   return car
 --- >>> montyHall3
 -- Just <Distribution> [(Middle,1 % 2),(Right,1 % 2)]
+
+
+montyHall4 = normalize $ S.do
+  car <- S.uniform [Left,Middle,Right]
+  choice <- S.return Middle
+  announcement <- host car choice
+  S.observe (announcement == Left)
+  S.return car
+    where
+      host :: Door -> Door -> Subdistribution Door
+      host Left   Left   = S.uniform [Middle, Right]
+      host Middle Middle = S.uniform [Left, Right]
+      host Right  Right  = S.uniform [Left, Middle] 
+      host Left Middle   = S.uniform [Right]
+      host Left Right    = S.uniform [Middle]
+      host Middle Left   = S.uniform [Right]
+      host Middle Right  = S.uniform [Left]
+      host Right Left    = S.uniform [Middle]
+      host Right Middle  = S.uniform [Left]
+      
+--- >>> montyHall4
+-- Just <Distribution> [(Middle,1 % 3),(Right,2 % 3)]
