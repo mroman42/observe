@@ -1,0 +1,52 @@
+{-# LANGUAGE RebindableSyntax #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use <&>" #-}
+
+
+
+module AffineBag where
+
+import Bag
+import Prelude
+import AuxiliarySemiring
+import FinitaryMonad
+import Data.Maybe
+
+data AffineBag a = AffineBag (Bag a) deriving (Eq, Show)
+
+unAffineBag :: AffineBag a -> Bag a
+unAffineBag (AffineBag b) = b
+
+mkAffineBag :: (Eq a) => [(a, Int)] -> AffineBag a
+mkAffineBag m = case totalWeight m of
+    0 -> error "Empty affine bag."
+    _ -> AffineBag (Bag m)
+
+bagValidity :: (Eq a) => AffineBag (Maybe a) -> Int
+bagValidity (AffineBag b) = totalWeight (unBag (bagFilter ((/=) Nothing) b))
+
+
+instance FinitaryMonad AffineBag where
+  fBind :: (Eq a, Eq b) => AffineBag a -> (a -> AffineBag b) -> AffineBag b
+  fBind (AffineBag (Bag d)) f = 
+    AffineBag $ Bag $ 
+    sBind d (unBag . unAffineBag . f)
+
+  fReturn x = AffineBag $ Bag [(x,1)]
+
+  fNext :: (Eq a, Eq b) => AffineBag a -> AffineBag b -> AffineBag b
+  fNext d f = fBind d (const f)
+
+  fMap :: (Eq a, Eq b) => (a -> b) -> AffineBag a -> AffineBag b
+  fMap f (AffineBag u) = AffineBag $ fMap f u
+
+unsafeFromMaybe :: Maybe a -> a
+unsafeFromMaybe = fromMaybe undefined
+
+distributiveMaybeBag :: (Eq a) => AffineBag (Maybe a) -> Maybe (AffineBag a)
+distributiveMaybeBag b = case bagValidity b of
+  0 -> Nothing
+  n -> Just (AffineBag 
+                (fMap unsafeFromMaybe (bagFilter ((/=) Nothing) 
+                    (unAffineBag b))))
+  

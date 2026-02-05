@@ -10,6 +10,8 @@ import Data.Maybe
 import Data.List ( maximumBy )
 
 
+
+
 removeMaybes :: (Num r) => [(Maybe a, r)] -> [(a, r)]
 removeMaybes [] = []
 removeMaybes ((Just x, v):l) = (x,v) : removeMaybes l
@@ -27,6 +29,9 @@ weightOfPoint x ((y,r) : l)
  | x == y    = r + weightOfPoint x l
  | otherwise = weightOfPoint x l
 
+totalWeight :: (Num r) => [(a, r)] -> r
+totalWeight l = sum (map snd l)
+ 
 reweight :: (Eq a, Eq r, Num r) => [(a, r)] -> [(a, r)]
 reweight [] = []
 reweight ((x,r) : l) = 
@@ -61,6 +66,11 @@ checkMaybe ((x,r):u) v = do
   w <- checkMaybeThis (x,r) v
   checkMaybe u w
 
+sFilter :: (Num r) => (a -> Bool) -> [(a,r)] -> [(a,r)]
+sFilter p [] = []
+sFilter p ((x,r) : l) = case p x of
+  True ->  ((x,r) : sFilter p l)
+  False -> sFilter p l
 
 sMap :: (Num r) => (a -> b) -> [(a, r)] -> [(b, r)]
 sMap f [] = []

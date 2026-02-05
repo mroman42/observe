@@ -14,11 +14,15 @@ import FinitaryMonad
 data Bag a where
     Bag :: (Eq a) => [(a, Int)] -> Bag a
 
-unBag :: Bag a -> [(a, Int)]    
+unBag :: Bag a -> [(a, Int)]
 unBag (Bag d) = d
 
 bag :: (Eq a) => [(a, Int)] -> Bag a
 bag = Bag
+
+bagFilter :: (Eq a) => (a -> Bool) -> Bag a -> Bag a
+bagFilter p (Bag l) = Bag (sFilter p l)
+
 
 instance (Eq a) => Eq (Bag a) where
   (==) :: (Eq a) => Bag a -> Bag a -> Bool
