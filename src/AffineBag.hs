@@ -11,6 +11,8 @@ import Prelude
 import AuxiliarySemiring
 import FinitaryMonad
 import Data.Maybe
+import Distribution
+import BagDist
 
 data AffineBag a = AffineBag (Bag a) deriving (Eq, Show)
 
@@ -49,4 +51,9 @@ distributiveMaybeBag b = case bagValidity b of
   n -> Just (AffineBag 
                 (fMap unsafeFromMaybe (bagFilter ((/=) Nothing) 
                     (unAffineBag b))))
+
+distributeBagDist :: (Eq a) => 
+  AffineBag (Distribution a) -> Distribution (AffineBag a)
+distributeBagDist (AffineBag b) = fMap AffineBag $ distribute b
+  
   

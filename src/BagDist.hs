@@ -14,9 +14,10 @@ import FinitaryMonad
 multiply :: (Eq x) => 
   Distribution (Bag x) -> Distribution (Bag x) -> Distribution (Bag x)
 multiply u v = do
-    x <- u
-    y <- v
-    return (bagAdd x y)
+  x <- u
+  y <- v
+  return (bagAdd x y)
+  
 
 diracEmptyBag :: (Eq a) => Distribution (Bag a)
 diracEmptyBag = distribution [(bag [],1)]
@@ -30,12 +31,23 @@ diracBag x = distribution [((bag [(x,1)]), 1)]
 
 reduce :: (Eq a) => (a -> a -> a) -> a -> Bag a -> a
 reduce m u (Bag []) = u
-reduce m u (Bag ((x,0):l)) = reduce m u (Bag l)
-reduce m u (Bag ((x,n):l)) = m x (reduce m u (Bag ((x,n-1):l)))
+reduce m u (Bag ((x,0):l)) = reduce m u (bag l)
+reduce m u (Bag ((x,n):l)) = m x (reduce m u (bag ((x,n-1):l)))
 
+-- Something is wrong here.
 distribute :: (Eq a) => Bag (Distribution a) -> Distribution (Bag a)
-distribute = reduce multiply diracEmptyBag . (fMap (fMap fReturn))
+distribute = --fMap Bag (distList b)
+  reduce multiply diracEmptyBag . (fMap (fMap fReturn))
 
+--distWeightList :: (Eq a) => [(Distribution a, Int)] -> Distribution [a]
+
+
+distList :: (Eq a) => [Distribution a] -> Distribution [a]
+distList [] = return []
+distList (d:l) = do
+  x <- d
+  xs <- distList l
+  return (x:xs)
 
 
 --- D-unitality
@@ -77,7 +89,6 @@ bunitL :: (Eq a) => Distribution a -> Distribution (Bag a)
 bunitL x = distribute $ fReturn x
 
 
---- B-multiplicativity fails.
 -- BBDX -> BDBX -> DBBX -> DBX
 -- BBDX -> BDX -> DBX
 bmultL :: (Eq a) => Bag (Bag (Distribution a)) -> Distribution (Bag a)
@@ -91,8 +102,7 @@ ex3 = bag
   [ (bag [ ], 1)
   , (bag [ (distribution [('y', 1/3), ('z', 2/3)], 1) ], 2) ]
 
---- Perhaps try B-multiplicativity for non-empty bags?
--- Nope. I believe it is almost by cardinality.
+
 ex4 :: Bag (Bag (Distribution Char))
 ex4 = bag
   [ (bag [ (distribution [('x', 1/2), ('y', 1/2)], 1) ], 1)
@@ -102,5 +112,19 @@ ex4 = bag
   , (bag [ (distribution [('y', 1)], 1) ], 1)
   ]
 
---- May I try the maybe monad?
+ex5 :: Bag (Bag (Distribution Char))
+ex5 = bag
+  [ (bag [ (distribution [('y', 2/3), ('z', 1/3)], 1) 
+         , (distribution [('y', 1/3), ('z', 2/3)], 1) 
+         ], 2) ]
+
+ex6 :: Bag (Bag (Distribution Char))
+ex6 = bag
+  [ (bag [ (distribution [('x', 1)], 1) ], 1)
+  , (bag [ (distribution [('y', 1)], 1) 
+         , (distribution [('x', 1/2), ('y', 1/2)], 1)  
+         ], 2) 
+  ]
+
+
 

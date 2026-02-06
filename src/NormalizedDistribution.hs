@@ -58,6 +58,8 @@ intervene :: Bool -> Normalized ()
 intervene True = uniform [()]
 intervene False = uniform []
 
+observe = intervene
+
 uniform :: (Eq a) => [a] -> Normalized a
 uniform xs = Normalized $ Just $ D.uniform xs
 

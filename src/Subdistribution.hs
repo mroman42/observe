@@ -11,7 +11,8 @@ import Data.Maybe
 import Data.List ( maximumBy )
 import Distribution qualified as D hiding ((>>=), (>>), return)
 import Distribution (Distribution (..), distribution)
-import Measure (measNormalize, condense, totalWeight, Measure (..))
+import Measure (measNormalize, totalWeight, Measure (..))
+import AuxiliarySemiring
 import FinitaryMonad
 
 newtype Subdistribution a = Subdistribution (Distribution (Maybe a))

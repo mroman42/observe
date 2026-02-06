@@ -8,7 +8,6 @@ module Measure
   , Distributional (..)
   , validity
   , uniform
-  , condense
   , totalWeight
   ) where
 
@@ -18,11 +17,13 @@ import Data.Maybe
 import Data.List ( maximumBy )
 import AuxiliarySemiring
 
+
 class Distributional d where
   fromList :: (Eq a) => [(a, Rational)] -> d a
   toList :: (Eq a) => d a -> [(a, Rational)]
   weightOf :: (Eq a) => a -> d a -> Rational
   simplify :: (Eq a) => d a -> d a
+
 
 validity :: (Distributional d, Eq a) => d a -> Rational
 validity xs = sum $ map snd $ toList xs
@@ -48,18 +49,8 @@ instance (Eq a) => Eq (Measure a) where
   (==) :: (Eq a) => Measure a -> Measure a -> Bool
   (==) (Measure m) (Measure n) = isJust $ checkMaybe m n
 
-distMap :: (a -> b) -> [(a,Rational)] -> [(b,Rational)]
-distMap = sMap
-
-distJoin :: (Eq a) => [([(a,Rational)],Rational)] -> [(a,Rational)]
-distJoin = sJoin
-
-wlBind :: (Eq a, Eq b) => [(a, Rational)] -> (a -> [(b, Rational)]) 
-                       -> [(b, Rational)]
-wlBind = sBind
-
 measBind :: (Eq a, Eq b) => Measure a -> (a -> Measure b) -> Measure b
-measBind (Measure xs) f = Measure $ wlBind xs (toList . f)
+measBind (Measure xs) f = Measure $ sBind xs (toList . f)
 
 measReturn :: (Eq a) => a -> Measure a
 measReturn x = Measure [(x,1)]
