@@ -64,8 +64,9 @@ library
         Distribution,
         Subdistribution,
         Measure,
-        NormalizationBoxes,
+        --NormalizationBoxes,
         NormalizedDistribution,
+        AuxiliarySemiring,
         FinitaryMonad,
 
     -- Modules included in this library but not exported.

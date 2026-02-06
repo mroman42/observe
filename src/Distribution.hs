@@ -6,62 +6,47 @@
 module Distribution 
     ( Distribution (..)
     , distribution
+    , unDistribution
     , uniform
-    , toList
-    , fromList
     , weightOf
-    , map
     , (>>=)
     , (>>)
     , return
     ) where
 
-import Prelude hiding ((>>=), (>>), return, pure, map)
-import Prelude qualified as P
-import Measure (Measure (..))
-import Measure qualified as M
+import Prelude hiding ((>>=), (>>), return, pure)
 import FinitaryMonad
 import AuxiliarySemiring
-
+import Data.Maybe
 
 data Distribution a where
-    Distribution :: (Eq a) => Measure a -> Distribution a
+    Distribution :: (Eq a) => [(a, Rational)] -> Distribution a
 
-fromList l = mkDistribution (M.fromList l)    
+unDistribution :: Distribution a -> [(a, Rational)]
+unDistribution (Distribution d) = d
 
 distribution :: (Eq a) => [(a, Rational)] -> Distribution a
 distribution d = case totalWeight d of
-    1 -> fromList $ condense d
+    1 -> Distribution $ condense d
     _ -> error "Non-full support for a distribution."
 
-mkDistribution :: (Eq a) => Measure a -> Distribution a
-mkDistribution m = case M.validity m of
-    1 -> Distribution m
-    _ -> error "Non-full support for a distribution."
-
-
-toList (Distribution m) = M.toList m
-
-weightOf x (Distribution m) = M.weightOf x m
-
-simplify (Distribution m) = Distribution $ M.simplify m
-
-distToMeas :: Distribution a -> Measure a
-distToMeas (Distribution a) = a
+weightOf :: a -> Distribution a -> Rational
+weightOf x (Distribution m) = weightOfPoint x m
 
 uniform :: (Eq a) => [a] -> Distribution a
-uniform l = Distribution $ M.uniform l
+uniform l = Distribution $ map (\x -> (x, 1 / (fromIntegral (length l)))) l
+
 
 instance (Eq a) => Eq (Distribution a) where
     (==) :: Distribution a -> Distribution a -> Bool
-    (==) (Distribution a) (Distribution b) = (a == b)
+    (==) (Distribution a) (Distribution b) = isJust $ checkMaybe a b
 
 
 instance FinitaryMonad Distribution where
     fBind :: (Eq a, Eq b) 
       => Distribution a -> (a -> Distribution b) -> Distribution b
     fBind (Distribution d) f = 
-      Distribution $ M.measBind d (distToMeas . f)
+      Distribution $ sBind d (unDistribution . f)
 
     fNext :: (Eq a, Eq b) => Distribution a -> Distribution b -> Distribution b
     fNext d f = fBind d (const f)
@@ -70,12 +55,14 @@ instance FinitaryMonad Distribution where
     fReturn x = uniform [x]
 
     fMap :: (Eq a, Eq b) => (a -> b) -> Distribution a -> Distribution b
-    fMap = map 
+    fMap f (Distribution d) = Distribution $ condense (sMap f d)
 
-(>>=) :: (Eq a, Eq b) => Distribution a -> (a -> Distribution b) -> Distribution b
+(>>=) :: (Eq a, Eq b) 
+  => Distribution a -> (a -> Distribution b) -> Distribution b
 (>>=) = fBind
 
-(>>) :: (Eq a, Eq b) => Distribution a -> Distribution b -> Distribution b
+(>>) :: (Eq a, Eq b) 
+  => Distribution a -> Distribution b -> Distribution b
 (>>) = fNext
 
 return :: (Eq a) => a -> Distribution a
@@ -84,10 +71,6 @@ return = fReturn
 pure :: (Eq a) => a -> Distribution a
 pure = return
 
-map :: (Eq a, Eq b) => (a -> b) -> Distribution a -> Distribution b
-map f (Distribution (Measure d)) = 
-    distribution $ P.map (\(x,v) -> (f x, v)) d
-
 instance (Eq a, Show a) => Show (Distribution a) where
   show :: (Eq a) => Distribution a -> String
-  show (Distribution (Measure d)) = "<Distribution> " ++ show d
+  show (Distribution d) = "<Distribution> " ++ show d

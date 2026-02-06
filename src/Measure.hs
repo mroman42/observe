@@ -58,4 +58,3 @@ measReturn x = Measure [(x,1)]
 measNormalize :: (Eq a) => [(a,Rational)] -> [(a,Rational)]
 measNormalize l = map (\(x,r) -> (x,r / totalWeight l)) l
 
-

@@ -14,6 +14,8 @@ import Distribution (Distribution (..), distribution)
 import Measure (measNormalize, totalWeight, Measure (..))
 import AuxiliarySemiring
 import FinitaryMonad
+import qualified GHC.TypeLits as D
+
 
 newtype Subdistribution a = Subdistribution (Distribution (Maybe a))
 
@@ -24,13 +26,13 @@ toList :: (Eq a) => Subdistribution a -> [(a, Rational)]
 toList (Subdistribution d) = 
   P.map (\(x,v) -> (fromMaybe undefined x, v)) $ 
   filter (\(x,v) -> isJust x) $ 
-  D.toList d
+  D.unDistribution d
 
 subdistribution :: (Eq a) => [(a,Rational)] -> Subdistribution a
 subdistribution = fromList
 
 fromList :: (Eq a) => [(a,Rational)] -> Subdistribution a
-fromList l = Subdistribution $ Distribution $ Measure lm
+fromList l = Subdistribution $ Distribution $ lm
   where
     weightNothing = 1 - totalWeight l
     lm = (Nothing, weightNothing) : P.map (\(x,v) -> (Just x, v)) l
@@ -89,10 +91,7 @@ showSubdistribution d =
   "Posterior: " ++ show (rescale d) ++ "\n"
 
 rescale :: (Eq a) => Subdistribution a -> Distribution a
-rescale xs = Distribution (Measure $ measNormalize $ toList xs)
+rescale xs = Distribution (measNormalize $ toList xs)
 
 dJoin :: (Eq a) => Subdistribution (Subdistribution a) -> Subdistribution a
 dJoin dss = (>>=) dss id
-
---subdFilterMaybe :: (Eq a) => (a -> Bool) -> Subdistribution a -> Subdistribution a
---subdFilterMaybe f (Subdistribution xs) = 
