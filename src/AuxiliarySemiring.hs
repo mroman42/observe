@@ -61,7 +61,7 @@ checkMaybeThis (x,r) ((y,s):u) | (x == y) && (r == s) = Just u
 
 checkMaybe :: (Eq a, Eq r) => [(a, r)] -> [(a, r)] -> Maybe ()
 checkMaybe [] [] = return ()
-checkMaybe [] v  = return ()
+checkMaybe [] v  = Nothing
 checkMaybe ((x,r):u) v = do
   w <- checkMaybeThis (x,r) v
   checkMaybe u w

@@ -19,7 +19,7 @@ toMaybeDistribution (Normalized d) = d
 
 toList :: (Eq a) => Normalized a -> [(a, Rational)]
 toList (Normalized Nothing) = []
-toList (Normalized (Just d)) = D.toList d
+toList (Normalized (Just d)) = unDistribution d
 
 ifThenElse True  x y = x
 ifThenElse False x y = y
@@ -48,8 +48,8 @@ instance (Eq a, Show a) => Show (Normalized a) where
     $ toMaybeDistribution
     $ normalize
     $ S.Subdistribution
-    $ D.map toMaybeDistribution 
-    $ D.map f d
+    $ fMap toMaybeDistribution 
+    $ fMap f d
 
 (>>) :: (Eq a, Eq b) => Normalized a -> Normalized b -> Normalized b
 (>>) d f = d >>= const f

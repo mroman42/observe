@@ -64,7 +64,7 @@ library
         Distribution,
         Subdistribution,
         Measure,
-        --NormalizationBoxes,
+        Bag,
         NormalizedDistribution,
         AuxiliarySemiring,
         FinitaryMonad,

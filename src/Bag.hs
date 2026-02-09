@@ -26,7 +26,7 @@ bagFilter p (Bag l) = bag (sFilter p l)
 
 instance (Eq a) => Eq (Bag a) where
   (==) :: (Eq a) => Bag a -> Bag a -> Bool
-  (==) (Bag m) (Bag n) = isJust $ checkMaybe m n
+  (==) (Bag m) (Bag n) = isJust $ checkMaybe (condense m) (condense n)
 
 bagReturn :: (Eq a) => a -> Bag a
 bagReturn x = Bag [(x,1)]
@@ -47,6 +47,10 @@ instance FinitaryMonad Bag where
   fMap f (Bag u) = bag $ sMap f u
 
 
+preshow (Bag []) = ""
+preshow (Bag ((x,0):l)) = preshow (Bag l)
+preshow (Bag ((x,n):l)) = show x ++ preshow (Bag ((x,n-1):l))
+
 instance (Eq a, Show a) => Show (Bag a) where
   show :: (Eq a) => Bag a -> String
-  show (Bag d) = "<Bag> " ++ show d
+  show x = "(" ++ preshow x ++ ")"
