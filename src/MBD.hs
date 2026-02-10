@@ -7,6 +7,8 @@ import AffineBag
 import Distribution hiding ((>>=), (>>), return)
 import FinitaryMonad
 import NormalizedDistribution (normalizing)
+import DistributeMaybeAffinebag
+import DistributeDistributionAffine
 
 newtype MBD a = MBD (Maybe (AffineBag (Distribution a))) deriving (Eq, Show)
 
@@ -16,7 +18,7 @@ unMBD (MBD x) = x
 mbdMult :: (Eq a) => MBD (MBD a) -> MBD a
 mbdMult (MBD x) = MBD 
   $ _
--- $ fMap (fMap )
+-- $ fMap (fMap distributeDistributionAffine)
   $ fJoin
   $ fMap distributiveMaybeBag
   $ fMap (fMap normalizing)

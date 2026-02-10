@@ -11,3 +11,4 @@ distributiveMaybeBag b = case bagValidity b of
   n -> Just (AffineBag 
                 (fMap unsafeFromMaybe (bagFilter ((/=) Nothing) 
                     (unAffineBag b))))
+

@@ -1,4 +1,5 @@
 {-# LANGUAGE RebindableSyntax #-}
+
 module DistBag where
 
 import Prelude hiding ((>>=), (>>), return, pure, map)
@@ -16,10 +17,7 @@ listPack ((b,p):l) =
   fBind b (\x -> 
     fBind (listPack l) (\xs -> 
       fReturn ((x,p):xs)))
-  --x <- b 
-  --xs <- listPack l
-  --return ((x,p):xs)
-
+      
 
 ex1 :: Distribution (Bag Char)
 ex1 = D.distribution [(bag ['x'],2/3), (bag ['y'], 1/3)]
