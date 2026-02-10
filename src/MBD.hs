@@ -16,7 +16,7 @@ unMBD (MBD x) = x
 mbdMult :: (Eq a) => MBD (MBD a) -> MBD a
 mbdMult (MBD x) = MBD 
   $ _
-  $ fMap (fMap )
+-- $ fMap (fMap )
   $ fJoin
   $ fMap distributiveMaybeBag
   $ fMap (fMap normalizing)

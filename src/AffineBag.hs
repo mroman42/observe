@@ -45,13 +45,6 @@ instance FinitaryMonad AffineBag where
 unsafeFromMaybe :: Maybe a -> a
 unsafeFromMaybe = fromMaybe undefined
 
-distributiveMaybeBag :: (Eq a) => AffineBag (Maybe a) -> Maybe (AffineBag a)
-distributiveMaybeBag b = case bagValidity b of
-  0 -> Nothing
-  n -> Just (AffineBag 
-                (fMap unsafeFromMaybe (bagFilter ((/=) Nothing) 
-                    (unAffineBag b))))
-
 distributeBagDist :: (Eq a) => 
   AffineBag (Distribution a) -> Distribution (AffineBag a)
 distributeBagDist (AffineBag b) = fMap AffineBag $ distribute b
