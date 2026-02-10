@@ -4,7 +4,7 @@ import Bag
 import AffineBag
 import Distribution
 import FinitaryMonad
->
+
 
 distributeAffinebagDistribution :: (Eq a) =>
   Distribution (AffineBag a) -> AffineBag (Distribution a)
