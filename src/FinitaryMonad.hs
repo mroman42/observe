@@ -1,3 +1,4 @@
+
 module FinitaryMonad where
 
 class FinitaryMonad m where    
@@ -8,3 +9,10 @@ class FinitaryMonad m where
 
 fJoin :: (FinitaryMonad m, Eq a, Eq (m a)) => m (m a) -> m a
 fJoin xs = fBind xs id
+
+
+instance FinitaryMonad Maybe where
+    fBind = (>>=)
+    fNext = (>>)
+    fReturn = return
+    fMap = fmap

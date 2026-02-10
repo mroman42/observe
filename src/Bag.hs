@@ -17,11 +17,14 @@ data Bag a where
 unBag :: Bag a -> [(a, Int)]
 unBag (Bag d) = d
 
-bag :: (Eq a) => [(a, Int)] -> Bag a
-bag = Bag . condense
+bagWeight :: (Eq a) => [(a, Int)] -> Bag a
+bagWeight = Bag . condense
+
+bag :: (Eq a) => [a] -> Bag a
+bag = Bag . condense . fmap (\x -> (x,1))
 
 bagFilter :: (Eq a) => (a -> Bool) -> Bag a -> Bag a
-bagFilter p (Bag l) = bag (sFilter p l)
+bagFilter p (Bag l) = bagWeight (sFilter p l)
 
 
 instance (Eq a) => Eq (Bag a) where
@@ -32,20 +35,34 @@ bagReturn :: (Eq a) => a -> Bag a
 bagReturn x = Bag [(x,1)]
 
 bagAdd :: (Eq a) => Bag a -> Bag a -> Bag a
-bagAdd (Bag u) (Bag v) = bag (u ++ v)
+bagAdd (Bag u) (Bag v) = bagWeight (u ++ v)
 
 instance FinitaryMonad Bag where
   fBind :: (Eq a, Eq b) => Bag a -> (a -> Bag b) -> Bag b
-  fBind (Bag d) f = bag $ sBind d (unBag . f)
+  fBind (Bag d) f = bagWeight $ sBind d (unBag . f)
 
-  fReturn x = bag [(x,1)]
+  fReturn x = bagWeight [(x,1)]
 
   fNext :: (Eq a, Eq b) => Bag a -> Bag b -> Bag b
   fNext d f = fBind d (const f)
 
   fMap :: (Eq a, Eq b) => (a -> b) -> Bag a -> Bag b
-  fMap f (Bag u) = bag $ sMap f u
+  fMap f (Bag u) = bagWeight $ sMap f u
 
+  
+(>>=) :: (Eq a, Eq b) 
+  => Bag a -> (a -> Bag b) -> Bag b
+(>>=) = fBind
+
+(>>) :: (Eq a, Eq b) 
+  => Bag a -> Bag b -> Bag b
+(>>) = fNext
+
+return :: (Eq a) => a -> Bag a
+return = fReturn
+
+pure :: (Eq a) => a -> Bag a
+pure = return
 
 preshow (Bag []) = ""
 preshow (Bag ((x,0):l)) = preshow (Bag l)

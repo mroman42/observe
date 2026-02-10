@@ -14,6 +14,9 @@ import FinitaryMonad
 
 newtype Normalized a = Normalized (Maybe (Distribution a))
 
+unNormalized :: Normalized a -> Maybe (Distribution a)
+unNormalized (Normalized d) = d
+
 toMaybeDistribution :: Normalized a -> Maybe (Distribution a)
 toMaybeDistribution (Normalized d) = d
 
@@ -32,6 +35,9 @@ normalize :: (Eq a) => Subdistribution a -> Normalized a
 normalize xs = case S.validity xs == 0 of
     True -> Normalized Nothing
     False -> Normalized $ Just $ S.rescale xs
+
+normalizing :: (Eq a) => Distribution (Maybe a) -> Maybe (Distribution a)
+normalizing x = unNormalized $ normalize $ S.Subdistribution x
 
 instance (Eq a) => Eq (Normalized a) where
     (==) :: (Eq a) => Normalized a -> Normalized a -> Bool

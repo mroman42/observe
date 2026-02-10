@@ -1,13 +1,12 @@
 {-# LANGUAGE RebindableSyntax #-}
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Use <&>" #-}
 
 
 module BagDist where
 
 import Prelude hiding ((>>=), (>>), return, pure, map)
 import Distribution
-import Bag
+import Bag hiding ((>>=), (>>), return, pure, map)
 import FinitaryMonad
 
 -- DBX is a commutative monoid.
@@ -20,17 +19,16 @@ multiply u v = do
   
 
 diracEmptyBag :: (Eq a) => Distribution (Bag a)
-diracEmptyBag = distribution [(bag [],1)]
+diracEmptyBag = distribution [(bagWeight [],1)]
 
 diracBag :: (Eq a) => a -> Distribution (Bag a)
-diracBag x = distribution [((bag [(x,1)]), 1)]
+diracBag x = distribution [((bagWeight [(x,1)]), 1)]
 
 reduce :: (Eq a) => (a -> a -> a) -> a -> Bag a -> a
 reduce m u (Bag []) = u
 reduce m u (Bag ((x,0):l)) = reduce m u (Bag l)
 reduce m u (Bag ((x,n):l)) = m x (reduce m u (Bag ((x,n-1):l)))
 
--- Something is wrong here.
 distribute :: (Eq a) => Bag (Distribution a) -> Distribution (Bag a)
 distribute = algebra . prepare
   where
@@ -58,7 +56,7 @@ dunitR b = fReturn b
 
 --- >>> dunitL ex1 == dunitR ex1
 ex1 :: Bag Char
-ex1 = bag [('x',2),('y',3)]
+ex1 = bagWeight [('x',2),('y',3)]
 
 
 --- D-multiplicativity
@@ -70,7 +68,7 @@ dmultR :: (Eq a) => Bag (Distribution (Distribution a)) -> Distribution (Bag a)
 dmultR x = distribute $ fMap fJoin x
 
 ex2 :: Bag (Distribution (Distribution Char))
-ex2 = bag
+ex2 = bagWeight
   [ (distribution 
       [ (distribution [('x', 1/3), ('y', 2/3)], 1/2)
       , (distribution [('x', 1/2), ('y', 1/2)], 1/2)
@@ -98,48 +96,48 @@ bmultR :: (Eq a) => Bag (Bag (Distribution a)) -> Distribution (Bag a)
 bmultR x = distribute $ fJoin x
 
 ex3 :: Bag (Bag (Distribution Char))
-ex3 = bag
-  [ (bag [ ], 1)
-  , (bag [ (distribution [('y', 1/3), ('z', 2/3)], 1) ], 2) ]
+ex3 = bagWeight
+  [ (bagWeight [ ], 1)
+  , (bagWeight [ (distribution [('y', 1/3), ('z', 2/3)], 1) ], 2) ]
 
 
 ex4 :: Bag (Bag (Distribution Char))
-ex4 = bag
-  [ (bag [ (distribution [('x', 1/2), ('y', 1/2)], 1) ], 1)
-  , (bag [ (distribution [('y', 1/3), ('z', 1/3), ('x',1/3)], 1) 
+ex4 = bagWeight
+  [ (bagWeight [ (distribution [('x', 1/2), ('y', 1/2)], 1) ], 1)
+  , (bagWeight [ (distribution [('y', 1/3), ('z', 1/3), ('x',1/3)], 1) 
          , (distribution [('z', 1/5), ('y', 2/5), ('x',2/5)], 1)  
          ], 2) 
-  , (bag [ (distribution [('y', 1)], 1) ], 1)
+  , (bagWeight [ (distribution [('y', 1)], 1) ], 1)
   ]
 
 ex5 :: Bag (Bag (Distribution Char))
-ex5 = bag
-  [ (bag [ (distribution [('y', 2/3), ('z', 1/3)], 1) 
+ex5 = bagWeight
+  [ (bagWeight [ (distribution [('y', 2/3), ('z', 1/3)], 1) 
          , (distribution [('y', 1/3), ('z', 2/3)], 1) 
          ], 2) ]
 
 ex6 :: Bag (Bag (Distribution Char))
-ex6 = bag
-  [ (bag [ (distribution [('x', 1)], 1) ], 1)
-  , (bag [ (distribution [('y', 1)], 1) 
+ex6 = bagWeight
+  [ (bagWeight [ (distribution [('x', 1)], 1) ], 1)
+  , (bagWeight [ (distribution [('y', 1)], 1) 
          , (distribution [('x', 1/2), ('y', 1/2)], 1) ], 1) 
   ]
 
 ex7 :: Bag (Bag (Distribution Char))
-ex7 = bag
-  [ (bag [ (distribution [('x', 1)], 1) ], 1)
-  , (bag [ (distribution [('y', 1)], 1) 
+ex7 = bagWeight
+  [ (bagWeight [ (distribution [('x', 1)], 1) ], 1)
+  , (bagWeight [ (distribution [('y', 1)], 1) 
          , (distribution [('x', 1/2), ('y', 1/2)], 1) ], 2) 
   ]
 
 p0 :: Bag Char
-p0 = bag [('x',1)]
+p0 = bagWeight [('x',1)]
 
 p1 :: Bag Char
-p1 = bag [('x',1), ('y',1)]
+p1 = bagWeight [('x',1), ('y',1)]
 
 p2 :: Bag Char
-p2 = bag [('y',2)]
+p2 = bagWeight [('y',2)]
 
 q0 :: Distribution (Bag Char)
 q0 = distribution [(p0,1)]
@@ -147,16 +145,18 @@ q0 = distribution [(p0,1)]
 q1 :: Distribution (Bag Char)
 q1 = distribution [(p1, 1/2), (p2, 1/2)]
 
-newtype Purse x = Purse (Bag x) deriving (Eq, Show)
-
 r1 :: Bag (Distribution (Bag Char))
-r1 = bag [(distribution [( bag [('x',1)] ,1 / 1)],1),
-          (distribution [( bag [('y',1),('x',1)], 1 / 2), 
-                         ( bag [('y',2)],1 / 2)], 
+r1 = bagWeight [(distribution [( bagWeight [('x',1)] ,1 / 1)],1),
+          (distribution [( bagWeight [('y',1),('x',1)], 1 / 2), 
+                         ( bagWeight [('y',2)],1 / 2)], 
                          2)]
 
 r2 :: Bag (Distribution Char)
-r2 = bag [(distribution [('u',1 / 1)], 1),
+r2 = bagWeight [(distribution [('u',1 / 1)], 1),
           (distribution [('v',1 / 2), 
                          ('w',1 / 2)], 
                          2)]
+
+
+
+newtype StochMon a = StochMon (Distribution (Bag a))

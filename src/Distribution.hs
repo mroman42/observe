@@ -12,12 +12,14 @@ module Distribution
     , (>>=)
     , (>>)
     , return
+    , squeezeDist
     ) where
 
 import Prelude hiding ((>>=), (>>), return, pure)
 import FinitaryMonad
 import AuxiliarySemiring
 import Data.Maybe
+import GHC.RTS.Flags (DebugFlags(squeeze))
 
 data Distribution a where
     Distribution :: (Eq a) => [(a, Rational)] -> Distribution a
@@ -74,3 +76,7 @@ pure = return
 instance (Eq a, Show a) => Show (Distribution a) where
   show :: (Eq a) => Distribution a -> String
   show (Distribution d) = "<Distribution> " ++ show d
+
+squeezeDist :: (Eq a) => a -> Rational -> Distribution a -> Distribution a
+squeezeDist x r (Distribution d) =
+  Distribution $ (x,r) : valueMap (\s -> s / (1-r)) d

@@ -82,3 +82,6 @@ sJoin = condense . concatMap (\(u, s) -> map (\(x,r) -> (x, r * s)) u)
 sBind :: (Eq a, Eq b, Eq r, Num r) => [(a, r)] -> (a -> [(b, r)]) -> [(b, r)]
 sBind d f = sJoin $ sMap f d
 
+valueMap :: (r -> s) -> [(a, r)] -> [(a, s)]
+valueMap f [] = []
+valueMap f ((x, r):l) = (x, f r) : valueMap f l
