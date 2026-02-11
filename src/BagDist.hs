@@ -5,9 +5,9 @@
 module BagDist where
 
 import Prelude hiding ((>>=), (>>), return, pure, map)
-import Distribution
-import Bag hiding ((>>=), (>>), return, pure, map)
-import FinitaryMonad
+--import FinMonad.FinMonad
+import FinMonad.Bag hiding ((>>=), (>>), return, pure, map)
+import FinMonad.Distribution
 
 -- DBX is a commutative monoid.
 multiply :: (Eq x) => 

@@ -1,6 +1,7 @@
-module DistributeMaybeAffinebag where
+module DistributeMaybeAffinebag
+  ( distributiveMaybeBag ) 
+  where
     
-import FinMonad
 import FinMonad.Bag
 import FinMonad.AffineBag
 

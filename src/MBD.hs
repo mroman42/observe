@@ -3,11 +3,10 @@
 module MBD where
 
 import Prelude hiding ((>>=), (>>), return, pure)
-import AffineBag 
-import qualified Bag as B
-import Distribution hiding ((>>=), (>>), return)
-import FinitaryMonad
-import NormalizedDistribution (normalizing)
+import qualified FinMonad.Bag as B
+import FinMonad.AffineBag 
+import FinMonad.Distribution hiding ((>>=), (>>), return)
+import FinMonad.NormalizedDistribution (normalizing)
 import DistributeMaybeAffinebag
 import DistributeAffinebagDistribution
 
@@ -32,9 +31,6 @@ instance FinitaryMonad MBD where
 
   fBind :: (Eq a, Eq b) => MBD a -> (a -> MBD b) -> MBD b
   fBind a f = mbdMult $ fMap f a
-
-  fNext :: (Eq a, Eq b) => MBD a -> MBD b -> MBD b
-  fNext d f = fBind d (const f)
 
   fReturn :: (Eq a) => a -> MBD a
   fReturn x = MBD (fReturn (fReturn (fReturn x)))

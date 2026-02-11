@@ -4,10 +4,10 @@ module ExampleThreeMBD where
 
 
 import Prelude hiding (id, (.), (>>=), (>>), return)
-import FinitaryMonad
+import FinMonad.FinMonad
+import FinMonad.Distribution (Distribution(..))
+import qualified FinMonad.Distribution as D
 import MBD
-import Distribution (Distribution(..))
-import qualified Distribution as D
 import FrequentistTransformation
 
 data Health = Healthy | Ill deriving (Show, Eq)

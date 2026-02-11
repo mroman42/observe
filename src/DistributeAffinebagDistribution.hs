@@ -1,12 +1,14 @@
-module DistributeAffinebagDistribution where
+module DistributeAffinebagDistribution 
+  (distributeAffinebagDistribution)
+where
 
-import FinMonad
 import FinMonad.Bag
 import FinMonad.AffineBag
 import FinMonad.Distribution
 
 distributeAffinebagDistribution :: (Eq a) =>
   Distribution (AffineBag a) -> AffineBag (Distribution a)
+
 distributeAffinebagDistribution (Distribution p) =
   fMap Distribution (listAPack p)
 

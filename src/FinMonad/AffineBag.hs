@@ -1,6 +1,9 @@
 {-# LANGUAGE RebindableSyntax #-}
 
-module FinMonad.AffineBag where
+module FinMonad.AffineBag 
+  ( module FinMonad.AffineBag
+  , module FinMonad.FinMonad
+  ) where
 
 import FinMonad.FinMonad
 import FinMonad.Distribution
@@ -34,9 +37,6 @@ instance FinitaryMonad AffineBag where
     sBind d (unBag . unAffineBag . f)
 
   fReturn x = AffineBag $ Bag [(x,1)]
-
-  fNext :: (Eq a, Eq b) => AffineBag a -> AffineBag b -> AffineBag b
-  fNext d f = fBind d (const f)
 
   fMap :: (Eq a, Eq b) => (a -> b) -> AffineBag a -> AffineBag b
   fMap f (AffineBag u) = AffineBag $ fMap f u

@@ -1,7 +1,8 @@
 {-# LANGUAGE RebindableSyntax #-}
 
 module FinMonad.Distribution 
-    ( Distribution (..)
+    ( module FinMonad.FinMonad
+    , Distribution (..)
     , distribution
     , unDistribution
     , uniform

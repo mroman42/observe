@@ -1,6 +1,9 @@
 {-# LANGUAGE RebindableSyntax #-}
 
-module FinMonad.Bag where
+module FinMonad.Bag 
+  ( module FinMonad.FinMonad
+  , module FinMonad.Bag
+  ) where
 
 import FinMonad.FinMonad
 import Prelude hiding ((>>=), (>>), return, pure, map)
