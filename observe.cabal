@@ -67,7 +67,7 @@ library
         FinMonad.NormalizedDistribution,
         FinMonad.Bag,
         FinMonad.AffineBag,
-        Measure,
+        --Measure,
         AuxiliarySemiring,
         BagDist,
         FrequentistTransformation,

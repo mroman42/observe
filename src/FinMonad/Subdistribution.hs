@@ -10,11 +10,9 @@ import Prelude hiding ((>>=), (>>), return, map, pure)
 import Prelude qualified as P
 import Data.Ord
 import Data.Maybe
---import Data.List ( maximumBy )
 import FinMonad.FinMonad
 import FinMonad.Distribution qualified as D hiding ((>>=), (>>), return)
 import FinMonad.Distribution (Distribution (..), distribution)
-import Measure (measNormalize, totalWeight, Measure (..))
 import AuxiliarySemiring
 import qualified GHC.TypeLits as D
 

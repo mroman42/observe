@@ -92,3 +92,7 @@ showBracket [] = show "⊥"
 showBracket [(x,r)] = show r ++ "|" ++ show x ++ "⟩"
 showBracket ((x,r):ys) = 
   show r ++ "|" ++ show x ++ "⟩" ++ " + " ++ "\n" ++ showBracket ys
+
+
+measNormalize :: (Eq a) => [(a,Rational)] -> [(a,Rational)]
+measNormalize l = map (\(x,r) -> (x,r / totalWeight l)) l

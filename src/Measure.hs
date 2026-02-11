@@ -55,6 +55,4 @@ measBind (Measure xs) f = Measure $ sBind xs (toList . f)
 measReturn :: (Eq a) => a -> Measure a
 measReturn x = Measure [(x,1)]
 
-measNormalize :: (Eq a) => [(a,Rational)] -> [(a,Rational)]
-measNormalize l = map (\(x,r) -> (x,r / totalWeight l)) l
 
