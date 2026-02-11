@@ -76,10 +76,6 @@ observe :: Bool -> Subdistribution ()
 observe True = Subdistribution (fReturn (Just ()))
 observe False = Subdistribution (fReturn Nothing)
 
-
-
-
-
 instance (Eq a, Show a) => Show (Subdistribution a) where
   show :: Eq a => Subdistribution a -> String
   show = showSubdistribution
