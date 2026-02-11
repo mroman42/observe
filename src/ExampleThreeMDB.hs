@@ -10,7 +10,7 @@ import AffineBag hiding ((>>=), (>>), return, distribution)
 import AuxiliarySemiring 
 import FinitaryMonad
 import MDB
-
+import FrequentistTransformation
 
 data Health = Healthy | Ill deriving (Show, Eq)
 data TestResult = Positive | Negative deriving (Show, Eq)
@@ -74,10 +74,6 @@ experiment4 = do
     return (p,t,r)
   observe (t == r)
   return p
-
-flrn :: (Eq a) => AffineBag a -> Distribution a  
-flrn (AffineBag (Bag d)) = Distribution $ valueMap 
-  (\v -> (fromIntegral v) / (fromIntegral (totalWeight d))) d
 
 collapsing :: (Eq a) => MDB a -> Maybe (Distribution a)
 collapsing (MDB Nothing) = Nothing
