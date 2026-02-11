@@ -1,15 +1,12 @@
 {-# LANGUAGE RebindableSyntax #-}
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Use <&>" #-}
 
+module FinMonad.Bag where
 
-module Bag where
-
+import FinMonad.FinMonad
 import Prelude hiding ((>>=), (>>), return, pure, map)
 import Prelude qualified as P
 import AuxiliarySemiring
 import Data.Maybe
-import FinitaryMonad
 
 data Bag a where
     Bag :: (Eq a) => [(a, Int)] -> Bag a
@@ -42,9 +39,6 @@ instance FinitaryMonad Bag where
   fBind (Bag d) f = bagWeight $ sBind d (unBag . f)
 
   fReturn x = bagWeight [(x,1)]
-
-  fNext :: (Eq a, Eq b) => Bag a -> Bag b -> Bag b
-  fNext d f = fBind d (const f)
 
   fMap :: (Eq a, Eq b) => (a -> b) -> Bag a -> Bag b
   fMap f (Bag u) = bagWeight $ sMap f u

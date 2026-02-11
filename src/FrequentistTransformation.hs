@@ -1,8 +1,8 @@
 module FrequentistTransformation where
 
-import AffineBag
-import Bag
-import Distribution
+import FinMonad.AffineBag
+import FinMonad.Bag
+import FinMonad.Distribution
 import AuxiliarySemiring 
 
 flrn :: (Eq a) => AffineBag a -> Distribution a  

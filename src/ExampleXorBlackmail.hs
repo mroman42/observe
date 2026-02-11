@@ -3,7 +3,7 @@
 module ExampleXorBlackmail where
 
 import Prelude hiding ((>>=), (>>), return)
-import Subdistribution
+import FinMonad.Subdistribution
 import Data.MultiSet qualified as MSet
 
 

@@ -1,9 +1,6 @@
 {-# LANGUAGE RebindableSyntax #-}
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Use <&>" #-}
 
-
-module Distribution 
+module FinMonad.Distribution 
     ( Distribution (..)
     , distribution
     , unDistribution
@@ -16,10 +13,10 @@ module Distribution
     ) where
 
 import Prelude hiding ((>>=), (>>), return, pure)
-import FinitaryMonad
+import FinMonad.FinMonad
 import AuxiliarySemiring
 import Data.Maybe
-import GHC.RTS.Flags (DebugFlags(squeeze))
+
 
 data Distribution a where
     Distribution :: (Eq a) => [(a, Rational)] -> Distribution a
@@ -49,9 +46,6 @@ instance FinitaryMonad Distribution where
       => Distribution a -> (a -> Distribution b) -> Distribution b
     fBind (Distribution d) f = 
       Distribution $ sBind d (unDistribution . f)
-
-    fNext :: (Eq a, Eq b) => Distribution a -> Distribution b -> Distribution b
-    fNext d f = fBind d (const f)
 
     fReturn :: (Eq a) => a -> Distribution a
     fReturn x = uniform [x]

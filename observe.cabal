@@ -61,13 +61,14 @@ library
     -- Modules exported by the library.
     exposed-modules:  
         Observe,
-        Distribution,
-        Subdistribution,
+        FinMonad.FinMonad,
+        FinMonad.Distribution,
+        FinMonad.Subdistribution,
+        FinMonad.NormalizedDistribution,
+        FinMonad.Bag,
+        FinMonad.AffineBag,
         Measure,
-        Bag,
-        NormalizedDistribution,
         AuxiliarySemiring,
-        FinitaryMonad,
         BagDist,
         FrequentistTransformation,
 

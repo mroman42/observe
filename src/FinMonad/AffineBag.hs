@@ -1,15 +1,11 @@
 {-# LANGUAGE RebindableSyntax #-}
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Use <&>" #-}
 
+module FinMonad.AffineBag where
 
-
-module AffineBag where
-
+import FinMonad.FinMonad
 import Bag
 import Prelude
 import AuxiliarySemiring
-import FinitaryMonad
 import Data.Maybe
 import Distribution
 import BagDist

@@ -3,7 +3,7 @@
 module ExampleCovid where
 
 import Prelude hiding ((>>=), (>>), return)
-import Subdistribution
+import FinMonad.Subdistribution
 import Data.Ord
 import Data.List
 import Data.MultiSet qualified as MSet

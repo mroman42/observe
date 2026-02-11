@@ -2,8 +2,8 @@
 
 module ExampleRain where
 
+import FinMonad.Distribution    
 import Prelude hiding ((>>=), (>>), return)
-import Distribution    
 
 data Weather = Rainy | Sunny deriving (Eq, Show)
 data Streets = Dry | Wet deriving (Eq, Show)
@@ -26,4 +26,6 @@ umbrella = do
 
 
 -- >>> umbrella        
--- <Distribution> [(Yes,9 % 20),(No,11 % 20)]
+-- <Distribution> 
+-- 9 % 20|Yes⟩ + 
+-- 11 % 20|No⟩

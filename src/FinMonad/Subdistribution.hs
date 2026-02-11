@@ -2,18 +2,18 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use <&>" #-}
 
-module Subdistribution where
+module FinMonad.Subdistribution where
 
 import Prelude hiding ((>>=), (>>), return, map)
 import Prelude qualified as P
 import Data.Ord
 import Data.Maybe
-import Data.List ( maximumBy )
-import Distribution qualified as D hiding ((>>=), (>>), return)
-import Distribution (Distribution (..), distribution)
+--import Data.List ( maximumBy )
+import FinMonad.FinMonad
+import FinMonad.Distribution qualified as D hiding ((>>=), (>>), return)
+import FinMonad.Distribution (Distribution (..), distribution)
 import Measure (measNormalize, totalWeight, Measure (..))
 import AuxiliarySemiring
-import FinitaryMonad
 import qualified GHC.TypeLits as D
 
 

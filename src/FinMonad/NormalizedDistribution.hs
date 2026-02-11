@@ -1,15 +1,15 @@
 {-# LANGUAGE RebindableSyntax #-}
 {-# LANGUAGE QualifiedDo #-}
 
-module NormalizedDistribution where
+module FinMonad.NormalizedDistribution where
 
-import Subdistribution qualified as S hiding ((>>=), (>>), return)
-import Distribution hiding ((>>=), (>>), return, uniform, distribution)
-import Distribution qualified as D
+import FinMonad.FinMonad
+import FinMonad.Subdistribution qualified as S hiding ((>>=), (>>), return)
+import FinMonad.Subdistribution (Subdistribution)
+import FinMonad.Distribution hiding ((>>=), (>>), return, uniform, distribution)
+import FinMonad.Distribution qualified as D
 import Prelude hiding ((>>=), (>>), return)
 import Data.Maybe
-import Subdistribution (Subdistribution)
-import FinitaryMonad
 
 
 newtype Normalized a = Normalized (Maybe (Distribution a))
