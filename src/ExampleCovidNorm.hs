@@ -30,4 +30,26 @@ threeTest = do
     observe (result3 == Pos)
     return individual
 
+-- Jeffrey: Ill with probability ~9%.
+experimentJeffrey :: Normalized Individual
+experimentJeffrey = do
+    (r,p,t) <- do
+        r <- uniform [Pos, Pos, Neg]
+        p <- distribution [(Ill, 5/100), (Healthy, 95/100)]
+        t <- testing p
+        return (r,p,t)
+    observe (t == r)
+    return p
 
+-- Variational: Ill with probability ~33%
+experiment :: Normalized Individual
+experiment = do
+    r <- uniform [Pos, Pos, Neg]
+    (p,t) <- do
+        p <- distribution [(Ill, 5/100), (Healthy, 95/100)]
+        t <- testing p
+        return (p,t)
+    observe (t == r)
+    return p    
+
+-- Pearl, however, changes with size, and thus needs the bag instead of its distribution. It cannot use the homomorphism.
