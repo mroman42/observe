@@ -89,6 +89,7 @@ library
         ExampleSleepingBeauty,
         ExampleSmoking,
         ExampleXorBlackmail,
+        ExampleThreeMBD,
 
     -- LANGUAGE extensions used by modules in this package.
     default-extensions:
