@@ -2,9 +2,9 @@
 
 module ExampleSailor where
 
-import Subdistribution
 import Prelude hiding ((>>=), (>>), return, Left, Right)
 import Data.MultiSet qualified as MSet
+import FinMonad.Subdistribution
 
 
 multiset :: (Ord a) => [a] -> MSet.MultiSet a

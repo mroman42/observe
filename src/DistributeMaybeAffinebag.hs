@@ -1,8 +1,8 @@
 module DistributeMaybeAffinebag where
     
-import FinitaryMonad
-import Bag
-import AffineBag
+import FinMonad
+import FinMonad.Bag
+import FinMonad.AffineBag
 
 
 distributiveMaybeBag :: (Eq a) => AffineBag (Maybe a) -> Maybe (AffineBag a)

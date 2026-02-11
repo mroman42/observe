@@ -2,8 +2,8 @@
 
 module ExamplePrisoners where
 
+import FinMonad.Subdistribution
 import Prelude hiding ((>>=), (>>), return, Left, Right)
-import Subdistribution
 
 data Prisoner = PrisonerA | PrisonerB | PrisonerC deriving (Eq, Show, Ord)
 
@@ -21,4 +21,6 @@ prisoners = do
 --- >>> prisoners
 -- <Subdistribution>
 -- Validity: 1 % 2
--- Posterior: <Distribution> [(PrisonerA,1 % 3),(PrisonerB,2 % 3)]
+-- Posterior: <Distribution> 
+-- 1 % 3|PrisonerA⟩ + 
+-- 2 % 3|PrisonerB⟩

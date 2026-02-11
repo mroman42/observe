@@ -2,7 +2,7 @@
 
 module ExampleSleepingBeauty where
 
-import Subdistribution
+import FinMonad.Subdistribution
 import Prelude hiding ((>>=), (>>), return, Left, Right)
 
 -- Some researchers are going to put you to sleep. During the two days that your

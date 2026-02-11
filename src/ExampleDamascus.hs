@@ -2,7 +2,7 @@
 
 module ExampleDamascus where
 
-import Subdistribution
+import FinMonad.Subdistribution
 import Prelude hiding ((>>=), (>>), return)
 
 -- Cheating Death in Damascus with a random coin.

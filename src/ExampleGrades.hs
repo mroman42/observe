@@ -2,7 +2,7 @@
 
 module ExampleGrades where
 
-import Subdistribution
+import FinMonad.Subdistribution
 import Prelude hiding ((>>=), (>>), return, Left, Right)
 import Data.MultiSet qualified as MSet
 

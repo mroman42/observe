@@ -2,10 +2,9 @@
 
 module ExampleSleeping where
 
-import Subdistribution
 import Prelude hiding ((>>=), (>>), return, Left, Right)
 import Data.MultiSet qualified as MSet
-import Subdistribution (uniform)
+import FinMonad.Subdistribution
 
 
 multiset :: (Ord a) => [a] -> MSet.MultiSet a
@@ -31,4 +30,6 @@ sleepingBeauty = do
 --- >>> sleepingBeauty
 -- <Subdistribution>
 -- Validity: 1 % 1
--- Posterior: <Distribution> [(Heads,1 % 2),(Tails,1 % 2)]
+-- Posterior: <Distribution> 
+-- 1 % 2|Heads⟩ + 
+-- 1 % 2|Tails⟩

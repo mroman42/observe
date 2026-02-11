@@ -2,7 +2,7 @@
 
 module ExampleNewcomb where
 
-import Subdistribution
+import FinMonad.Subdistribution
 import Prelude hiding ((>>=), (>>), return)
 
 data Action = OneBox | TwoBox deriving (Eq, Show) 

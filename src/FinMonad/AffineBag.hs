@@ -3,11 +3,11 @@
 module FinMonad.AffineBag where
 
 import FinMonad.FinMonad
-import Bag
+import FinMonad.Distribution
+import FinMonad.Bag
 import Prelude
 import AuxiliarySemiring
 import Data.Maybe
-import Distribution
 import BagDist
 
 data AffineBag a = AffineBag (Bag a) deriving (Eq)

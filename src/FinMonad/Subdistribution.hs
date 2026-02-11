@@ -2,9 +2,11 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use <&>" #-}
 
-module FinMonad.Subdistribution where
+module FinMonad.Subdistribution 
+  ( module FinMonad.Subdistribution )
+  where
 
-import Prelude hiding ((>>=), (>>), return, map)
+import Prelude hiding ((>>=), (>>), return, map, pure)
 import Prelude qualified as P
 import Data.Ord
 import Data.Maybe

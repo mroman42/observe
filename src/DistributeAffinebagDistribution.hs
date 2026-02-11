@@ -1,10 +1,9 @@
 module DistributeAffinebagDistribution where
 
-import Bag
-import AffineBag
-import Distribution
-import FinitaryMonad
-
+import FinMonad
+import FinMonad.Bag
+import FinMonad.AffineBag
+import FinMonad.Distribution
 
 distributeAffinebagDistribution :: (Eq a) =>
   Distribution (AffineBag a) -> AffineBag (Distribution a)

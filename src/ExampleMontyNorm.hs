@@ -4,9 +4,9 @@
 module ExampleMontyNorm where
 
 import Prelude hiding ((>>=), (>>), return, Left, Right)
-import NormalizedDistribution
-import Subdistribution qualified as S
-import Subdistribution (Subdistribution(Subdistribution))
+import FinMonad.NormalizedDistribution
+import FinMonad.Subdistribution qualified as S
+import FinMonad.Subdistribution (Subdistribution(Subdistribution))
 
 
 

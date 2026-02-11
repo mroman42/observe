@@ -2,8 +2,8 @@
 
 module ExampleMontyFall where
 
-import Subdistribution
 import Prelude hiding ((>>=), (>>), return, Left, Right)
+import FinMonad.Subdistribution
 import Data.MultiSet qualified as MSet
 
 

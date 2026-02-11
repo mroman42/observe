@@ -2,8 +2,8 @@
 
 module ExampleMontyHall where
 
-import Subdistribution
 import Prelude hiding ((>>=), (>>), return, Left, Right)
+import FinMonad.Subdistribution
 
 -- Suppose you’re on a game show, and you’re given the choice of three doors: -- Behind one door is a car; behind the others, goats. You pick a door, say No. 
 -- 1, and the host, who knows what’s behind the doors, opens another door, say 

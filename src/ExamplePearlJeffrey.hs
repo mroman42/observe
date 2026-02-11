@@ -2,9 +2,8 @@
 
 module ExamplePearlJeffrey where
 
-import Prelude hiding (id, (.), (>>=), (>>), return)
-import Subdistribution
-import Prelude hiding ((>>=), (>>), return, Left, Right)
+import FinMonad.Subdistribution
+import Prelude hiding (id, (.), (>>=), (>>), return, id, Left, Right)
 import Data.MultiSet qualified as MSet
 import Control.Category
 import Control.Arrow

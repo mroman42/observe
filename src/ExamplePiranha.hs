@@ -2,8 +2,8 @@
 
 module ExamplePiranha where
 
+import FinMonad.Subdistribution
 import Prelude hiding ((>>=), (>>), return)
-import Subdistribution
 
 -- Understanding probability : chance rules in everyday life. Tijms.
 

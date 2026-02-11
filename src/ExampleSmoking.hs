@@ -3,7 +3,7 @@
 module ExampleSmoking where
 
 import Prelude hiding ((>>=), (>>), return)
-import NormalizedDistribution
+import FinMonad.NormalizedDistribution
 
 data HasGene = Gene | NoGene deriving (Eq, Show)
 data HasTar = Tar | NoTar deriving (Eq, Show)
