@@ -85,3 +85,10 @@ sBind d f = sJoin $ sMap f d
 valueMap :: (r -> s) -> [(a, r)] -> [(a, s)]
 valueMap f [] = []
 valueMap f ((x, r):l) = (x, f r) : valueMap f l
+
+
+showBracket :: (Show a, Show r) => [(a,r)] -> String
+showBracket [] = show "⊥"
+showBracket [(x,r)] = show r ++ "|" ++ show x ++ "⟩"
+showBracket ((x,r):ys) = 
+  show r ++ "|" ++ show x ++ "⟩" ++ " + " ++ "\n" ++ showBracket ys

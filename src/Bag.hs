@@ -65,8 +65,9 @@ pure :: (Eq a) => a -> Bag a
 pure = return
 
 preshow (Bag []) = ""
-preshow (Bag ((x,0):l)) = preshow (Bag l)
-preshow (Bag ((x,n):l)) = show x ++ preshow (Bag ((x,n-1):l))
+preshow (Bag ((x,0):l)) = preshow (Bag l) 
+preshow (Bag ((x,1):[])) = show x
+preshow (Bag ((x,n):l)) = show x ++ "," ++ preshow (Bag ((x,n-1):l))
 
 instance (Eq a, Show a) => Show (Bag a) where
   show :: (Eq a) => Bag a -> String

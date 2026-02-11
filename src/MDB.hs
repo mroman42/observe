@@ -1,43 +1,60 @@
 {-# LANGUAGE RebindableSyntax #-}
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Use <&>" #-}
-
 
 module MDB where
 
-import Prelude hiding ((>>=), (>>), return)
-import Distribution hiding ((>>=), (>>), return, uniform, distribution)
-import Subdistribution hiding ((>>=), (>>), return)
-import AffineBag
+import Prelude hiding ((>>=), (>>), return, pure)
+import AffineBag 
+import qualified Bag as B
+import Distribution hiding ((>>=), (>>), return)
 import FinitaryMonad
-import Data.Maybe
-import NormalizedDistribution hiding ((>>=), (>>), return)
+import NormalizedDistribution (normalizing)
+import DistributeMaybeAffinebag
+import AuxiliarySemiring (sMap)
 
-newtype NormBag a = NormBag (Maybe (Distribution (AffineBag a)))
+newtype MDB a = MDB (Maybe (Distribution (AffineBag a))) deriving (Eq, Show)
 
-unNormBag :: NormBag a -> Maybe (Distribution (AffineBag a))
-unNormBag (NormBag x) = x
+unMDB :: MDB a -> Maybe (Distribution (AffineBag a))
+unMDB (MDB x) = x
 
-instance (Eq a) => Eq (NormBag a) where
-    (==) :: (Eq a) => NormBag a -> NormBag a -> Bool
-    (==) (NormBag xs) (NormBag ys) = xs == ys
+mdbMult :: (Eq a) => MDB (MDB a) -> MDB a
+mdbMult (MDB x) = MDB
+  $ fMap fJoin
+  $ fMap (fMap (fMap fJoin))
+  $ fMap (fMap distributeBagDist)
+  $ fJoin
+  $ fMap normalizing
+  $ fMap (fMap distributiveMaybeBag)
+  $ fMap (fMap (fMap unMDB)) x
 
-instance (Eq a, Show a) => Show (NormBag a) where
-    show :: (Show a) => NormBag a -> String
-    show (NormBag xs) = show xs
+instance FinitaryMonad MDB where
+  fMap :: (Eq a, Eq b) => (a -> b) -> MDB a -> MDB b
+  fMap f (MDB x) = MDB $ fMap (fMap (fMap f)) x
 
-(>>=) :: (Eq a, Eq b) => NormBag a -> (a -> NormBag b) -> NormBag b
-(>>=) (NormBag Nothing) f = NormBag Nothing
-(>>=) (NormBag (Just d)) f = NormBag 
-    $ fmap (fMap fJoin)
-    $ fmap fJoin
-    $ fmap (fMap distributeBagDist)
-    $ toMaybeDistribution . normalize . Subdistribution
-    $ fMap distributiveMaybeBag
-    $ fMap (fMap (unNormBag . f)) d
+  fBind :: (Eq a, Eq b) => MDB a -> (a -> MDB b) -> MDB b
+  fBind a f = mdbMult $ fMap f a
 
-(>>) :: (Eq a, Eq b) => NormBag a -> NormBag b -> NormBag b
-(>>) d f = d >>= const f
+  fNext :: (Eq a, Eq b) => MDB a -> MDB b -> MDB b
+  fNext d f = fBind d (const f)
 
-return :: (Eq a) => a -> NormBag a
-return = NormBag . Just . fReturn . fReturn
+  fReturn :: (Eq a) => a -> MDB a
+  fReturn x = MDB (fReturn (fReturn (fReturn x)))
+
+(>>=) :: (Eq a, Eq b) => MDB a -> (a -> MDB b) -> MDB b
+(>>=) = fBind
+
+(>>) :: (Eq a, Eq b) => MDB a -> MDB b -> MDB b
+(>>) = fNext
+
+return :: (Eq a) => a -> MDB a
+return = fReturn
+
+
+distribution :: (Eq a) => [(a, Rational)] -> MDB a
+distribution d = MDB $ fReturn $ Distribution $ sMap fReturn d
+
+observe :: Bool -> MDB ()
+observe False = MDB $ Nothing
+observe True  = MDB $ fReturn $ fReturn $ fReturn ()
+
+bag :: (Eq a) => [a] -> MDB a
+bag l = MDB $ fReturn $ fReturn $ AffineBag $ B.bag l

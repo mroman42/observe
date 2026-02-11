@@ -2,8 +2,9 @@
 
 module MBD where
 
-import Prelude hiding ((>>=), (>>), return, pure, map)
-import AffineBag
+import Prelude hiding ((>>=), (>>), return, pure)
+import AffineBag 
+import qualified Bag as B
 import Distribution hiding ((>>=), (>>), return)
 import FinitaryMonad
 import NormalizedDistribution (normalizing)
@@ -50,6 +51,10 @@ return = fReturn
 distribution :: (Eq a) => [(a, Rational)] -> MBD a
 distribution d = MBD $ fReturn $ fReturn $ Distribution d
 
+bag :: (Eq a) => [a] -> MBD a
+bag l = MBD $ Just $ AffineBag $ B.bag $ map (\x -> Distribution [(x,1)]) l
+
 observe :: Bool -> MBD ()
 observe False = MBD $ Nothing
 observe True  = MBD $ fReturn $ fReturn $ fReturn ()
+

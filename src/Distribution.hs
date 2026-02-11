@@ -75,7 +75,7 @@ pure = return
 
 instance (Eq a, Show a) => Show (Distribution a) where
   show :: (Eq a) => Distribution a -> String
-  show (Distribution d) = "<Distribution> " ++ show d
+  show (Distribution d) = "<Distribution> " ++ "\n" ++ showBracket d
 
 squeezeDist :: (Eq a) => a -> Rational -> Distribution a -> Distribution a
 squeezeDist x r (Distribution d) =

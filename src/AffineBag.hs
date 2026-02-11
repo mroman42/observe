@@ -14,7 +14,10 @@ import Data.Maybe
 import Distribution
 import BagDist
 
-data AffineBag a = AffineBag (Bag a) deriving (Eq, Show)
+data AffineBag a = AffineBag (Bag a) deriving (Eq)
+
+instance (Show a, Eq a) => Show (AffineBag a) where
+  show (AffineBag x) = show x
 
 unAffineBag :: AffineBag a -> Bag a
 unAffineBag (AffineBag b) = b
