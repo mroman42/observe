@@ -1,43 +1,38 @@
 {-# LANGUAGE RebindableSyntax #-}
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Use <&>" #-}
 
-
-module MDB where
+module NormBag where
 
 import Prelude hiding ((>>=), (>>), return)
-import Distribution hiding ((>>=), (>>), return, uniform, distribution)
-import Subdistribution hiding ((>>=), (>>), return)
-import AffineBag
-import FinitaryMonad
-import Data.Maybe
-import NormalizedDistribution hiding ((>>=), (>>), return)
+import FinMonad.NormalizedDistribution hiding ((>>=), (>>), return)
+import qualified FinMonad.NormalizedDistribution as N
+import FinMonad.Bag hiding ((>>=), (>>), return)
+import qualified FinMonad.Bag as B
+import BagSequencing
 
-newtype NormBag a = NormBag (Maybe (Distribution (AffineBag a)))
+newtype NormBag a = NormBag (Normalized (Bag a))
 
-unNormBag :: NormBag a -> Maybe (Distribution (AffineBag a))
+unNormBag :: NormBag a -> Normalized (Bag a)
 unNormBag (NormBag x) = x
 
 instance (Eq a) => Eq (NormBag a) where
     (==) :: (Eq a) => NormBag a -> NormBag a -> Bool
     (==) (NormBag xs) (NormBag ys) = xs == ys
 
-instance (Eq a, Show a) => Show (NormBag a) where
-    show :: (Show a) => NormBag a -> String
-    show (NormBag xs) = show xs
-
 (>>=) :: (Eq a, Eq b) => NormBag a -> (a -> NormBag b) -> NormBag b
-(>>=) (NormBag Nothing) f = NormBag Nothing
-(>>=) (NormBag (Just d)) f = NormBag 
-    $ fmap (fMap fJoin)
-    $ fmap fJoin
-    $ fmap (fMap distributeBagDist)
-    $ toMaybeDistribution . normalize . Subdistribution
-    $ fMap distributiveMaybeBag
-    $ fMap (fMap (unNormBag . f)) d
+(>>=) (NormBag x) f = NormBag
+    $ fJoin
+    $ fMap (fMap fJoin)
+    $ fMap blSeq 
+    $ fMap (fMap (unNormBag . f)) x
 
 (>>) :: (Eq a, Eq b) => NormBag a -> NormBag b -> NormBag b
 (>>) d f = d >>= const f
 
 return :: (Eq a) => a -> NormBag a
-return = NormBag . Just . fReturn . fReturn
+return = NormBag . fReturn . fReturn
+
+distribution :: (Eq a) => [(a,Rational)] -> NormBag a
+distribution l = NormBag $ fMap fReturn $ N.distribution l
+
+bag :: (Eq a) => [a] -> NormBag a
+bag = NormBag . fReturn . B.bag

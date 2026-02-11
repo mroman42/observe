@@ -27,7 +27,6 @@ toList (Normalized (Just d)) = unDistribution d
 ifThenElse True  x y = x
 ifThenElse False x y = y
 
-
 unsafeFromMaybe :: Maybe a -> a
 unsafeFromMaybe = fromMaybe undefined
 
@@ -46,6 +45,7 @@ instance (Eq a) => Eq (Normalized a) where
 instance (Eq a, Show a) => Show (Normalized a) where
     show :: (Show a) => Normalized a -> String
     show (Normalized xs) = show xs
+
 
 (>>=) :: (Eq a, Eq b) => Normalized a -> (a -> Normalized b) -> Normalized b
 (>>=) (Normalized Nothing) f = Normalized Nothing
@@ -71,6 +71,11 @@ uniform xs = Normalized $ Just $ D.uniform xs
 
 return :: (Eq a) => a -> Normalized a
 return x = uniform [x]
+
+instance FinitaryMonad Normalized where
+    fBind = (>>=)
+    fReturn = return
+    fMap f (Normalized x) = Normalized (fMap (fMap f) x)
 
 distribution :: (Eq a) => [(a, Rational)] -> Normalized a
 distribution [] = Normalized Nothing

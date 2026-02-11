@@ -69,3 +69,8 @@ preshow (Bag ((x,n):l)) = show x ++ "," ++ preshow (Bag ((x,n-1):l))
 instance (Eq a, Show a) => Show (Bag a) where
   show :: (Eq a) => Bag a -> String
   show x = "(" ++ preshow x ++ ")"
+
+toList :: Bag a -> [a]
+toList (Bag []) = []
+toList (Bag ((x,0):l)) = toList (Bag l)
+toList (Bag ((x,n):l)) = x : toList (Bag ((x,n-1):l))
