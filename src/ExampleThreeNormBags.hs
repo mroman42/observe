@@ -26,8 +26,8 @@ test Healthy = distribution [(Positive, 5/100), (Negative, 95/100)]
 test Ill = distribution [(Positive, 90/100), (Negative, 10/100)]
 
 
-
-e1 = do
+-- Pearl
+e1 = frql $ do
   (p,r,t) <- do
     (p,r) <- do
         p <- prior
@@ -35,4 +35,17 @@ e1 = do
         return (p,r)    
     t <- test p
     return (p,r,t)
+  observe (t == r)
+  return p
+
+-- Jeffrey
+e2 = frql $ do
+  (p,r,t) <- do
+    (p,r) <- do
+        r <- bag [Positive, Positive, Negative]
+        p <- prior
+        return (p,r)    
+    t <- test p
+    return (p,r,t)
+  observe (t == r)
   return p

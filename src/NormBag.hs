@@ -8,6 +8,7 @@ import qualified FinMonad.NormalizedDistribution as N
 import FinMonad.Bag hiding ((>>=), (>>), return)
 import qualified FinMonad.Bag as B
 import BagSequencing
+import FrequentistTransformation
 
 newtype NormBag a = NormBag (Normalized (Bag a))
 
@@ -36,3 +37,13 @@ distribution l = NormBag $ fMap fReturn $ N.distribution l
 
 bag :: (Eq a) => [a] -> NormBag a
 bag = NormBag . fReturn . B.bag
+
+instance (Show a, Eq a) => Show (NormBag a) where
+    show (NormBag x) = show x
+
+observe :: Bool -> NormBag ()
+observe False = NormBag $ Normalized $ Nothing
+observe True  = NormBag $ N.distribution [(fReturn (),1)]
+
+frql :: (Eq a) => NormBag a -> Normalized a
+frql (NormBag d) = fJoin $ fMap flrnNorm $ d
